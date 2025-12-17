@@ -1,0 +1,51 @@
+/* 選択禁止（ドラッグ対策） */
+button,
+table,
+th,
+td {
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+/* テーブル共通 */
+table {
+    border-collapse: collapse;
+}
+
+th,
+td {
+    cursor: pointer;
+    border: 1px solid #ccc;
+    width: 90px;
+    height: 26px;
+    text-align: center;
+    font-size: 12px;
+}
+
+/* 選択不可マス（全画面共通） */
+td.disabled {
+    background-color: #767b84ff;
+    cursor: not-allowed;
+}
+
+td.disabled:hover {
+    background-color: #767b84ff;
+}
+
+/* ===== 有効マス（未選択） ===== */
+td.available {
+    background-color: #e3f2fd;
+    /* 青 */
+}
+
+/* ===== 集計用 ===== */
+td.has-bad {
+    background-color: #ffebee;
+    /* 赤 */
+}
+
+td.has-unknown {
+    background-color: #fff8e1;
+    /* 黄 */
+}

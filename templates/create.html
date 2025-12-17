@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>スケジュール作成</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/create.css') }}">
+</head>
+<body>
+
+<h2>スケジュール作成</h2>
+
+<button onclick="prevWeek()">◀ 前の週</button>
+<button onclick="nextWeek()">次の週 ▶</button>
+
+<table id="grid"></table>
+
+<br>
+<button onclick="create()">この時間帯で作成</button>
+
+<script>
+const START_DATE = "{{ start_date }}";
+</script>
+<script src="/static/grid.js"></script>
+<script src="/static/create.js"></script>
+
+</body>
+</html>
