@@ -59,8 +59,8 @@ table {
     border-collapse: separate;
     border-spacing: 0;
     /* width: 370px; */
-    width: calc(100% - 20px);
-    margin: 0 10px;
+    width: calc(100% - 10px);
+    margin: 0 5px;
     margin-top: var(--header-h);
 }
 
@@ -71,7 +71,7 @@ td {
     width: auto;
     height: 26px;
     text-align: center;
-    font-size: 12px;
+    font-size: 11px;
 }
 
 /* 選択不可マス（全画面共通） */
@@ -120,9 +120,9 @@ tr:first-child th:first-child {
 }
 
 tr:first-child th:nth-child(2) {
-    background-color: #ff8080ce;
+    background-color: #ff8080ee;
 }
 
 tr:first-child th:last-child {
-    background-color: #a5afd6ce;
+    background-color: #a5afd6ee;
 }

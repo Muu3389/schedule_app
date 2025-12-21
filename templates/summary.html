@@ -13,6 +13,7 @@
 <body>
     <div class="header">
         <h2>集計画面</h2>
+        <p>文字の大きさなどの設定によってはフォーマットが崩れることがあります</p>
         <a href="/{{ schedule_id }}/answer">▶ 回答する</a>
 
         <br>
@@ -26,7 +27,10 @@
     <div class="footer">
         <div id="detailPopup" class="popup"></div>
 
+        <div style="display: flex; align-items: center; gap: 10px;">
         <h3>回答者</h3>
+        <p>編集できます。本人が編集しましょう。</p>
+        </div>
         <ul id="respondentList"></ul>
     </div>
 
