@@ -8,23 +8,18 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/create.css') }}">
 </head>
+
 <body>
     <div class="header">
         <h2>スケジュール作成</h2>
         <p>予定を作成したい時間帯を選択してください。</p>
 
-        <button onclick="prevWeek()">◀ 前の週</button>
-        <button onclick="nextWeek()">次の週 ▶</button>
+        <button class="preweek-btn" onclick="prevWeek()">◀ 前の週</button>
+        <button class="nextweek-btn" onclick="nextWeek()">次の週 ▶</button>
+        <button class="submit-btn" onclick="create()">この時間帯で作成</button>
     </div>
-    <br>
 
     <table id="grid"></table>
-
-    <br>
-
-    <div class="footer">
-        <button class="create-btn" onclick="create()">この時間帯で作成</button>
-    </div>
 
     <script>
         const START_DATE = "{{ start_date }}";
@@ -32,5 +27,5 @@
     <script src="/static/grid.js"></script>
     <script src="/static/create.js"></script>
 
-    </body>
+</body>
 </html>

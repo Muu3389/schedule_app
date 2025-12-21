@@ -1,13 +1,21 @@
 :root {
-    --header-h: 220px;
+    --header-h: 265px;
 }
 
 .bad {
     background: #f6b6b6;
+    border-color: red;
+}
+
+input {
+    margin-bottom: 10px;
+    font-size: 16px;
+    border-color: #cccccc;
 }
 
 .unknown {
     background: #f6e6b6;
+    border-color: orange;
 }
 
 /* ===== 選択不可マス ===== */

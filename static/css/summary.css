@@ -1,5 +1,9 @@
 :root {
-    --header-h: 150px;
+    --header-h: 145px;
+}
+
+a {
+    font-size: 20px;
 }
 
 .popup {

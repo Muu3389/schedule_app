@@ -10,48 +10,44 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/schedule.css') }}">
 </head>
+
 <body>
+    <div class="header">
+        <h2>予定調整（回答）</h2>
+        <p>名前を入力し、都合が悪い時間・曖昧な時間を選択してください。<br>選択していないマスは可能な時間として扱われます。</p>
 
-<div class="header">
-<h2>予定調整（回答）</h2>
+        <strong>名前：</strong>
+        <input id="name" type="text" placeholder="名前を入力してください">
 
-<div style="margin-bottom: 10px;">
-  名前：
-  <input id="name" type="text" placeholder="名前を入力してください">
-</div>
+        <br>
 
-<div style="margin-bottom: 10px;">
-  <button id="badBtn" onclick="setMode('bad')">都合が悪い</button>
-  <button id="unknownBtn" onclick="setMode('unknown')">わからない</button>
-</div>
+        <button id="badBtn" onclick="setMode('bad')">都合が悪い</button>
+        <button id="unknownBtn" onclick="setMode('unknown')">わからない</button>
 
-<div style="margin-bottom: 10px;">
-  <button id="prevBtn" onclick="prevWeek()">◀ 前の週</button>
-  <button id="nextBtn" onclick="nextWeek()">次の週 ▶</button>
-</div>
-</div>
-<table id="grid"></table>
-<div class="footer">
-<div style="margin-top: 10px;">
-  <button onclick="submit()">送信</button>
-</div>
-</div>
+        <br>
 
-<!-- ===== Flask → JS 受け渡し ===== -->
-<script>
-  const START_DATE = "{{ schedule.start_date }}";
-  const AVAILABLE_SLOTS = {{ slots | tojson }};
-  const SCHEDULE_ID = "{{ schedule.id }}";
+        <button class="preweek-btn" id="prevBtn" onclick="prevWeek()">◀ 前の週</button>
+        <button class="nextweek-btn" id="nextBtn" onclick="nextWeek()">次の週 ▶</button>
+        <button class="submit-btn" onclick="submit()">予定を送信</button>
+    </div>
 
-  const EDIT_NAME = {{ edit_name | tojson }};
-  const PREV_ANSWERS = {{ answers | tojson }};
-</script>
+    <table id="grid"></table>
 
-<!-- ===== 共通グリッドロジック ===== -->
-<script src="{{ url_for('static', filename='grid.js') }}"></script>
+    <!-- ===== Flask → JS 受け渡し ===== -->
+    <script>
+        const START_DATE = "{{ schedule.start_date }}";
+        const AVAILABLE_SLOTS = {{ slots | tojson }};
+        const SCHEDULE_ID = "{{ schedule.id }}";
 
-<!-- ===== 回答画面専用JS ===== -->
-<script src="{{ url_for('static', filename='schedule.js') }}"></script>
+        const EDIT_NAME = {{ edit_name | tojson }};
+        const PREV_ANSWERS = {{ answers | tojson }};
+    </script>
+
+    <!-- ===== 共通グリッドロジック ===== -->
+    <script src="{{ url_for('static', filename='grid.js') }}"></script>
+
+    <!-- ===== 回答画面専用JS ===== -->
+    <script src="{{ url_for('static', filename='schedule.js') }}"></script>
 
 </body>
 </html>

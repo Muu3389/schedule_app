@@ -55,28 +55,29 @@ function hasAnySlotInWeek(slots, weekStartDate) {
 function buildGrid(grid, slots, cellRenderer, minSlot = 0, maxSlot = 47) {
     grid.innerHTML = "";
 
-    // ===== ヘッダ行（時間）=====
     const header = document.createElement("tr");
-    header.innerHTML = "<th>日付 / 時間</th>";
+    header.innerHTML = "<th>日付<br>時間</th>";
 
-    for (let slot = minSlot; slot <= maxSlot; slot++) {
+    for (let i = 0; i < 7; i++) {
         const th = document.createElement("th");
-        th.textContent = slotLabel(slot);
+        const dateStr = addDays(currentStartDate, i);
+        const [y, m, d] = dateStr.split("-");
+        th.innerHTML = `${y}<br>${m} / ${d}`
         header.appendChild(th);
     }
     grid.appendChild(header);
 
-    // ===== 各日付ごとに1行 =====
-    for (let i = 0; i < 7; i++) {
-        const day = addDays(currentStartDate, i);
-
+    for (let slot = minSlot; slot <= maxSlot; slot++) {
         const tr = document.createElement("tr");
+
         const th = document.createElement("th");
-        th.textContent = day;
+        th.textContent = slotLabel(slot);
         tr.appendChild(th);
 
-        for (let slot = minSlot; slot <= maxSlot; slot++) {
+        for (let i = 0; i < 7; i++) {
+            const day = addDays(currentStartDate, i);
             const key = `${day}-${slot}`;
+
             const td = document.createElement("td");
             td.dataset.key = key;
 

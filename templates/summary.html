@@ -6,43 +6,38 @@
 
   <title>集計</title>
 
-  <!-- 共通CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/summary.css') }}">
 </head>
+
 <body>
+    <div class="header">
+        <h2>集計画面</h2>
+        <a href="/{{ schedule_id }}/answer">▶ 回答する</a>
 
-<div class="header">
-    <h2>集計画面</h2>
-    <a href="/{{ schedule_id }}/answer">▶ 回答する</a>
-    <br>
+        <br>
 
-    <button id="prevBtn" onclick="prevWeek()">◀ 前の週</button>
-    <button id="nextBtn" onclick="nextWeek()">次の週 ▶</button>
-</div>
+        <button class="preweek-btn" id="prevBtn" onclick="prevWeek()">◀ 前の週</button>
+        <button class="nextweek-btn" id="nextBtn" onclick="nextWeek()">次の週 ▶</button>
+    </div>
 
-<table id="grid"></table>
+    <table id="grid"></table>
 
-<div class="footer">
-    <div id="detailPopup" class="popup"></div>
+    <div class="footer">
+        <div id="detailPopup" class="popup"></div>
 
-    <h3>回答者</h3>
-    <ul id="respondentList"></ul>
-</div>
+        <h3>回答者</h3>
+        <ul id="respondentList"></ul>
+    </div>
 
-<!-- ===== Flask → JS 受け渡し ===== -->
-<script>
-const START_DATE = "{{ start_date }}";
-const SCHEDULE_ID = "{{ schedule_id }}";
-const AVAILABLE_SLOTS = JSON.parse({{ slots_json | tojson }});
-</script>
+    <!-- ===== Flask → JS 受け渡し ===== -->
+    <script>
+    const START_DATE = "{{ start_date }}";
+    const SCHEDULE_ID = "{{ schedule_id }}";
+    const AVAILABLE_SLOTS = JSON.parse({{ slots_json | tojson }});
+    </script>
 
-<script src="{{ url_for('static', filename='grid.js') }}"></script>
-<script src="{{ url_for('static', filename='summary.js') }}"></script>
-
-
-
-
-
+    <script src="{{ url_for('static', filename='grid.js') }}"></script>
+    <script src="{{ url_for('static', filename='summary.js') }}"></script>
 </body>
 </html>

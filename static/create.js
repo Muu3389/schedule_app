@@ -11,14 +11,14 @@ function rebuild() {
 
         // ===== PC（マウス）=====
         td.onmousedown = (e) => {
-            e.preventDefault();
-            isDrag = true;
-            dragAdd = !state.has(key);
+            e.preventDefault(); // テキスト選択防止
+            isDrag = true;  // ドラッグ開始
+            dragAdd = !state.has(key);  // 追加のドラッグ or 解除のドラッグ
             toggle(td, key);
         };
 
-        td.onmouseover = () => isDrag && toggle(td, key);
-        td.onmouseup = () => isDrag = false;
+        td.onmouseover = () => isDrag && toggle(td, key);   // ドラッグ中なら切り替え
+        td.onmouseup = () => isDrag = false;    // 離したらドラッグ終了
 
         // ===== スマホ（タッチ）=====
         td.addEventListener("touchstart", (e) => {

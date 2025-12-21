@@ -6,17 +6,41 @@ body {
     position: fixed;
     top: 0;
     padding-left: 10px;
+    width: calc(100% - 10px);
     background: white;
     z-index: 90;
     height: var(--header-h);
 }
 
 .footer {
-    position: fixed;
-    margin-top: calc(--header-h + 230px);
+    position: static;
+    /* margin-top: calc(--header-h + 230px); */
+    /* left: 400px; */
     background: white;
     padding: 12px;
     z-index: 50;
+}
+
+h2 {
+    margin: 10px 0;
+    font-size: 25px;
+}
+
+p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+button {
+    margin: 7px 5px;
+    border: 1px solid #000000;
+    padding:12px 12px;
+    font-size: 14px;
+}
+
+.submit-btn {
+    margin-left: 120px;
+    background-color: #ffff005a;
 }
 
 /* 選択禁止（ドラッグ対策） */
@@ -29,14 +53,14 @@ td {
     -ms-user-select: none;
 }
 
-button {
-    margin-top: 5px;
-    padding: 6px 12px;
-}
 /* テーブル共通 */
 table {
-    border-collapse: collapse;
-    width: max-content;
+    /* border-collapse: collapse; */
+    border-collapse: separate;
+    border-spacing: 0;
+    /* width: 370px; */
+    width: calc(100% - 20px);
+    margin: 0 10px;
     margin-top: var(--header-h);
 }
 
@@ -44,7 +68,7 @@ th,
 td {
     cursor: pointer;
     border: 1px solid #ccc;
-    width: 40px;
+    width: auto;
     height: 26px;
     text-align: center;
     font-size: 12px;
@@ -77,19 +101,28 @@ td.has-unknown {
     /* 黄 */
 }
 
-/* 日付列（左端）を固定 */
-th:first-child,
-td:first-child {
+tr:first-child th {
     position: sticky;
-    left: 0;
-    background-color: #f70ae7ce;
-    width: 70px;
-    /* 下のセルが透けないように */
-    z-index: 2;
+    top: var(--header-h);
+    background-color: #ffffffce;
+    z-index: 80;
 }
 
-/* 左上の空セル（ヘッダ × 日付） */
+th:first-child,
+td:first-child {
+    background-color: #dddddd;
+    width: 40px;
+}
+
 tr:first-child th:first-child {
-    z-index: 3;
-    background-color: #f70ae7;
+    top: var(--header-h);
+    background-color: #b5b5b5;
+}
+
+tr:first-child th:nth-child(2) {
+    background-color: #ff8080ce;
+}
+
+tr:first-child th:last-child {
+    background-color: #a5afd6ce;
 }
