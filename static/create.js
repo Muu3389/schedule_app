@@ -9,56 +9,99 @@ function rebuild() {
     buildGrid(grid, null, (td, key) => {
         if (state.has(key)) td.classList.add("selected");
 
-        // ===== PC（マウス）=====
-        td.onmousedown = (e) => {
-            e.preventDefault(); // テキスト選択防止
-            isDrag = true;  // ドラッグ開始
-            dragAdd = !state.has(key);  // 追加のドラッグ or 解除のドラッグ
-            toggle(td, key);
-        };
-
-        td.onmouseover = () => isDrag && toggle(td, key);   // ドラッグ中なら切り替え
-        td.onmouseup = () => isDrag = false;    // 離したらドラッグ終了
+        // =====================
+        // タッチ用変数
+        // =====================
+        let touchStartTime = 0; // タッチ開始時間
+        let startKey = null;    // タッチ開始key
+        let startTd = null;  // タッチ開始td
+        let isScroll = false;  // 実質動いたか
+        let dragStarted = false;    // ドラッグ開始したか
+        let el = null;  // 現在の要素
+        let moveKey = null;   // 現在のkey
+        let elapsed = 0;    // 経過時間
 
         // ===== スマホ（タッチ）=====
         td.addEventListener("touchstart", (e) => {
             if (e.touches.length !== 1) return;
 
-            e.preventDefault(); // ← マスはスクロールさせない
+            touchStartTime = Date.now();
+            startKey = key;
+            startTd = td;
+            isScroll = false;
+            dragStarted = false;
 
-            isDrag = true;
-            dragAdd = !state.has(key);
-            toggle(td, key);
+            isDrag = false;
+            console.log("touchstart");
         });
 
         td.addEventListener("touchmove", (e) => {
-            if (!isDrag || e.touches.length !== 1) return;
+            if (e.touches.length !== 1) return;
 
-            e.preventDefault();
-
+            elapsed = Date.now() - touchStartTime;
             const touch = e.touches[0];
-            const el = document.elementFromPoint(
+            el = document.elementFromPoint(
                 touch.clientX,
                 touch.clientY
             );
+            if (!el || el.tagName !== "TD") return; // 無効マスを無視
 
-            if (!el || el.tagName !== "TD") return;
+            moveKey = el.dataset.key;
+            if (!moveKey) return;   // 無効マスを無視
 
-            const moveKey = el.dataset.key;
-            if (!moveKey) return;
+            if(moveKey !== startKey && !isScroll && elapsed < 250) isScroll = true; // スクロール判定
 
+            // 0.24秒未満なら何もしない
+            if (elapsed < 250) return;
+
+            // スクロールだったら何もしない
+            if (isScroll) return;
+
+            // スクロール防止
+            e.preventDefault();
+
+            // ドラッグ開始
+            if (!dragStarted) {
+                dragStarted = true;
+                isDrag = true;
+                dragAdd = !state.has(startKey);
+                toggle(startTd, startKey);
+            }
+
+            // マス切り替え
             if (dragAdd && !state.has(moveKey)) toggle(el, moveKey);
             if (!dragAdd && state.has(moveKey)) toggle(el, moveKey);
-        });
+        }, { passive: false });
 
         td.addEventListener("touchend", () => {
+            const elapsed = Date.now() - touchStartTime;
+
+            // 短タップ（0.3秒未満 ＆ 移動なし）
+            if (elapsed < 300 && !isScroll) {
+                dragAdd = !state.has(startKey);
+                toggle(startTd, moveKey);
+            }
+
             isDrag = false;
         });
 
-    }, 0, 47); // ★ 0:00〜23:30 全表示
+        // ===== PC（マウス）=====
+        td.onmousedown = (e) => {
+            e.preventDefault();
+            isDrag = true;
+            dragAdd = !state.has(key);
+            toggle(td, key);
+        };
+
+        td.onmouseover = () => isDrag && toggle(td, key);
+        td.onmouseup = () => isDrag = false;
+
+    }, 0, 47);
 
     updateWeekButtons();
 }
+
+
 
 // =====================
 // global mouse up
@@ -69,6 +112,7 @@ document.addEventListener("mouseup", () => {
 
 // 選択中マスの切り替え
 function toggle(td, key) {
+    if(!td) return;
     if (dragAdd) {
         state.add(key);
         td.classList.add("selected");
