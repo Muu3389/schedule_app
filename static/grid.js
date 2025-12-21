@@ -1,5 +1,11 @@
 let currentStartDate = toSunday(START_DATE);
 
+function toSunday(dateStr) {
+    const d = new Date(dateStr);
+    const day = d.getDay(); // 0:日, 1:月, ..., 6:土
+    d.setDate(d.getDate() - day);
+    return d.toISOString().slice(0, 10);
+}
 // ===== 有効日一覧（summary / schedule 用）=====
 let uniqueDates = [];
 
@@ -30,12 +36,6 @@ function calcSlotRange(slots) {
     };
 }
 
-function toSunday(dateStr) {
-    const d = new Date(dateStr);
-    const day = d.getDay(); // 0:日, 1:月, ..., 6:土
-    d.setDate(d.getDate() - day);
-    return d.toISOString().slice(0, 10);
-}
 
 function hasAnySlotInWeek(slots, weekStartDate) {
     for (const key of slots) {
@@ -55,27 +55,28 @@ function hasAnySlotInWeek(slots, weekStartDate) {
 function buildGrid(grid, slots, cellRenderer, minSlot = 0, maxSlot = 47) {
     grid.innerHTML = "";
 
+    // ===== ヘッダ行（時間）=====
     const header = document.createElement("tr");
     header.innerHTML = "<th></th>";
 
-    for (let i = 0; i < 7; i++) {
+    for (let slot = minSlot; slot <= maxSlot; slot++) {
         const th = document.createElement("th");
-        th.textContent = addDays(currentStartDate, i);
+        th.textContent = slotLabel(slot);
         header.appendChild(th);
     }
     grid.appendChild(header);
 
-    for (let slot = minSlot; slot <= maxSlot; slot++) {
-        const tr = document.createElement("tr");
+    // ===== 各日付ごとに1行 =====
+    for (let i = 0; i < 7; i++) {
+        const day = addDays(currentStartDate, i);
 
+        const tr = document.createElement("tr");
         const th = document.createElement("th");
-        th.textContent = slotLabel(slot);
+        th.textContent = day;
         tr.appendChild(th);
 
-        for (let i = 0; i < 7; i++) {
-            const day = addDays(currentStartDate, i);
+        for (let slot = minSlot; slot <= maxSlot; slot++) {
             const key = `${day}-${slot}`;
-
             const td = document.createElement("td");
             td.dataset.key = key;
 
@@ -91,6 +92,7 @@ function buildGrid(grid, slots, cellRenderer, minSlot = 0, maxSlot = 47) {
         grid.appendChild(tr);
     }
 }
+
 
 function nextWeek() {
     currentStartDate = addDays(currentStartDate, 7);

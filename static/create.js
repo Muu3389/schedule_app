@@ -1,16 +1,10 @@
 const grid = document.getElementById("grid");
 
-// =====================
-// state（選択記憶）
-// =====================
-const state = new Set();
+const state = new Set();    // 選択中のkey集合
 
 let isDrag = false;   // PC & スマホ共通
 let dragAdd = true;  // 追加 or 解除
 
-// =====================
-// rebuild
-// =====================
 function rebuild() {
     buildGrid(grid, null, (td, key) => {
         if (state.has(key)) td.classList.add("selected");
@@ -73,9 +67,7 @@ document.addEventListener("mouseup", () => {
     isDrag = false;
 });
 
-// =====================
-// toggle
-// =====================
+// 選択中マスの切り替え
 function toggle(td, key) {
     if (dragAdd) {
         state.add(key);
