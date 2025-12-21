@@ -12,6 +12,7 @@
 </head>
 <body>
 
+<div class="header">
 <h2>予定調整（回答）</h2>
 
 <div style="margin-bottom: 10px;">
@@ -28,11 +29,12 @@
   <button id="prevBtn" onclick="prevWeek()">◀ 前の週</button>
   <button id="nextBtn" onclick="nextWeek()">次の週 ▶</button>
 </div>
-
+</div>
 <table id="grid"></table>
-
+<div class="footer">
 <div style="margin-top: 10px;">
   <button onclick="submit()">送信</button>
+</div>
 </div>
 
 <!-- ===== Flask → JS 受け渡し ===== -->

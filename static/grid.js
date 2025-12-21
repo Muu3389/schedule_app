@@ -57,7 +57,7 @@ function buildGrid(grid, slots, cellRenderer, minSlot = 0, maxSlot = 47) {
 
     // ===== ヘッダ行（時間）=====
     const header = document.createElement("tr");
-    header.innerHTML = "<th></th>";
+    header.innerHTML = "<th>日付 / 時間</th>";
 
     for (let slot = minSlot; slot <= maxSlot; slot++) {
         const th = document.createElement("th");

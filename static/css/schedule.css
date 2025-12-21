@@ -1,21 +1,13 @@
+:root {
+    --header-h: 220px;
+}
+
 .bad {
     background: #f6b6b6;
 }
 
 .unknown {
     background: #f6e6b6;
-}
-table {
-    border-collapse: collapse;
-}
-
-th,
-td {
-    border: 1px solid #ccc;
-    width: 90px;
-    height: 26px;
-    text-align: center;
-    font-size: 12px;
 }
 
 /* ===== 選択不可マス ===== */

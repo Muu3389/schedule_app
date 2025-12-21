@@ -1,3 +1,14 @@
+:root {
+    --header-h: 150px;
+}
+
 .selected {
     background: #b6e3ff;
+}
+
+.create-btn {
+    position: static;
+    bottom: 16px;
+    right: 16px;
+    z-index: 100;
 }

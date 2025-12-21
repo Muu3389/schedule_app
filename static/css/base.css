@@ -1,3 +1,24 @@
+body {
+    margin: 0;
+}
+
+.header {
+    position: fixed;
+    top: 0;
+    padding-left: 10px;
+    background: white;
+    z-index: 90;
+    height: var(--header-h);
+}
+
+.footer {
+    position: fixed;
+    margin-top: calc(--header-h + 230px);
+    background: white;
+    padding: 12px;
+    z-index: 50;
+}
+
 /* 選択禁止（ドラッグ対策） */
 button,
 table,
@@ -8,16 +29,22 @@ td {
     -ms-user-select: none;
 }
 
+button {
+    margin-top: 5px;
+    padding: 6px 12px;
+}
 /* テーブル共通 */
 table {
     border-collapse: collapse;
+    width: max-content;
+    margin-top: var(--header-h);
 }
 
 th,
 td {
     cursor: pointer;
     border: 1px solid #ccc;
-    width: 90px;
+    width: 40px;
     height: 26px;
     text-align: center;
     font-size: 12px;
@@ -48,4 +75,21 @@ td.has-bad {
 td.has-unknown {
     background-color: #fff8e1;
     /* 黄 */
+}
+
+/* 日付列（左端）を固定 */
+th:first-child,
+td:first-child {
+    position: sticky;
+    left: 0;
+    background-color: #f70ae7ce;
+    width: 70px;
+    /* 下のセルが透けないように */
+    z-index: 2;
+}
+
+/* 左上の空セル（ヘッダ × 日付） */
+tr:first-child th:first-child {
+    z-index: 3;
+    background-color: #f70ae7;
 }
