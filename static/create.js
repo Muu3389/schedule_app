@@ -32,7 +32,6 @@ function rebuild() {
             dragStarted = false;
 
             isDrag = false;
-            console.log("touchstart");
         });
 
         td.addEventListener("touchmove", (e) => {
@@ -79,7 +78,7 @@ function rebuild() {
             // 短タップ（0.3秒未満 ＆ 移動なし）
             if (elapsed < 300 && !isScroll) {
                 dragAdd = !state.has(startKey);
-                toggle(startTd, moveKey);
+                toggle(startTd, startKey);
             }
 
             isDrag = false;

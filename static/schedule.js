@@ -38,6 +38,86 @@ function rebuild() {
             td.classList.add(state[key]);
         }
 
+        // タッチ用変数
+        let isTouch = false;
+        let touchStartTime = 0; // タッチ開始時間
+        let startKey = null;    // タッチ開始key
+        let startTd = null;  // タッチ開始td
+        let isScroll = false;  // 実質動いたか
+        let dragStarted = false;    // ドラッグ開始したか
+        let el = null;  // 現在の要素
+        let moveKey = null;   // 現在のkey
+        let elapsed = 0;    // 経過時間
+
+        // ===== スマホ（タッチ）=====
+        td.addEventListener("touchstart", (e) => {
+            if (e.touches.length !== 1) return;
+
+            isTouch = true;
+            touchStartTime = Date.now();
+            startKey = key;
+            startTd = td;
+            isScroll = false;
+            dragStarted = false;
+
+            isDrag = false
+        });
+
+        td.addEventListener("touchmove", (e) => {
+            if (e.touches.length !== 1) return;
+
+            elapsed = Date.now() - touchStartTime;
+            const touch = e.touches[0];
+            el = document.elementFromPoint(
+                touch.clientX,
+                touch.clientY
+            );
+            if (!el || el.tagName !== "TD") return; // 無効マスを無視
+
+            if (el.classList.contains("disabled")) return;   // 無効マスは無視
+
+
+            moveKey = el.dataset.key;
+            if (!moveKey) return;   // 無効マスを無視
+
+            if (moveKey !== startKey && !isScroll && elapsed < 250) isScroll = true; // スクロール判定
+
+            // 0.24秒未満なら何もしない
+            if (elapsed < 250) return;
+
+            // スクロールだったら何もしない
+            if (isScroll) return;
+
+            // スクロール防止
+            e.preventDefault();
+
+            // ドラッグ開始
+            if (!dragStarted) {
+                dragStarted = true;
+                isDrag = true;
+                dragAdd = !Object.hasOwn(state, startKey);
+                toggle(startTd, startKey);
+            }
+
+            // マス切り替え
+            if (dragAdd && !Object.hasOwn(state, moveKey)) toggle(el, moveKey);
+            if (!dragAdd && Object.hasOwn(state, moveKey)) toggle(el, moveKey);
+        }, { passive: false });
+
+        td.addEventListener("touchend", (e) => {
+            const elapsed = Date.now() - touchStartTime;
+
+            // 短タップ（0.3秒未満 ＆ 移動なし）
+            if (elapsed < 300 && !isScroll) {
+                dragAdd = !Object.hasOwn(state, startKey);
+                toggle(startTd, startKey);
+            }
+
+            isDrag = false;
+            e.preventDefault();
+            e.stopPropagation();
+        });
+
         // ===== PC（マウス）=====
         td.onmousedown = (e) => {
             e.preventDefault();
@@ -48,41 +128,6 @@ function rebuild() {
 
         td.onmouseover = () => isDrag && toggle(td, key);
         td.onmouseup = () => isDrag = false;
-
-        // ===== スマホ（タッチ）=====
-        td.addEventListener("touchstart", (e) => {
-            if (e.touches.length !== 1) return;
-
-            e.preventDefault(); // マス操作時のみスクロール停止
-
-            isDrag = true;
-            dragAdd = !state[key];
-            toggle(td, key);
-        });
-
-        td.addEventListener("touchmove", (e) => {
-            if (!isDrag || e.touches.length !== 1) return;
-
-            e.preventDefault();
-
-            const touch = e.touches[0];
-            const el = document.elementFromPoint(
-                touch.clientX,
-                touch.clientY
-            );
-
-            if (!el || el.tagName !== "TD") return;
-
-            const moveKey = el.dataset.key;
-            if (!moveKey) return;
-
-            if (dragAdd && !state[moveKey]) toggle(el, moveKey);
-            if (!dragAdd && state[moveKey]) toggle(el, moveKey);
-        });
-
-        td.addEventListener("touchend", () => {
-            isDrag = false;
-        });
 
     }, min, max);
 
@@ -116,14 +161,14 @@ function setMode(m) {
     mode = m;
 
     // 一旦リセット
-    badBtn.classList.remove("active", "bad");
-    unknownBtn.classList.remove("active", "unknown");
+    badBtn.classList.remove("bad");
+    unknownBtn.classList.remove("unknown");
 
     // 今のモードを強調表示
     if (m === "bad") {
-        badBtn.classList.add("active", "bad");
+        badBtn.classList.add("bad");
     } else {
-        unknownBtn.classList.add("active", "unknown");
+        unknownBtn.classList.add("unknown");
     }
 }
 
