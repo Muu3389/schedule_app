@@ -72,7 +72,7 @@ function rebuild() {
             if (!dragAdd && state.has(moveKey)) toggle(el, moveKey);
         }, { passive: false });
 
-        td.addEventListener("touchend", () => {
+        td.addEventListener("touchend", (e) => {
             const elapsed = Date.now() - touchStartTime;
 
             // 短タップ（0.3秒未満 ＆ 移動なし）
@@ -82,6 +82,8 @@ function rebuild() {
             }
 
             isDrag = false;
+            e.preventDefault();
+            e.stopPropagation();
         });
 
         // ===== PC（マウス）=====

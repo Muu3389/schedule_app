@@ -1,7 +1,11 @@
 :root {
-    --header-h: 145px;
+    --header-h: 140px;
 }
 
 .selected {
     background: #b6e3ff;
+}
+
+tr:nth-child(even) .selected {
+    background-color: #b0d3ff;
 }

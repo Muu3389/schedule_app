@@ -1,24 +1,33 @@
 :root {
-    --header-h: 285px;
+    --header-h: 205px;
 }
 
+/* 入力欄 */
 input {
     margin-bottom: 10px;
     font-size: 16px;
     border-color: #cccccc;
 }
 
+/* 都合が悪いマス */
 .bad {
     background: #f6b6b6;
-    border-color: red;
 }
 
+tr:nth-child(even) .bad {
+    background-color: #e6a6a6;
+}
+
+/* わからないマス */
 .unknown {
     background: #f6e6b6;
-    border-color: orange;
 }
 
-/* モードボタン共通 */
+tr:nth-child(even) .unknown {
+    background-color: #e6d6a6;
+}
+
+/* モードボタン */
 .mode-btn {
     padding: 6px 12px;
     margin-right: 6px;
@@ -28,7 +37,6 @@ input {
     font-weight: bold;
 }
 
-/* アクティブ状態 */
 .mode-btn.bad {
     background: #ffdddd;
     border-color: #ff6666;
@@ -39,14 +47,6 @@ input {
     border-color: #ffcc00;
 }
 
-/* ===== 選択不可マス ===== */
-td.disabled {
-    background-color: #767b84;
-    /* グレー */
-    cursor: not-allowed;
-}
-
-/* ホバーしても色変えない */
-td.disabled:hover {
-    background-color: #767b84;
+#resetBtn {
+    border-color: #000000;
 }

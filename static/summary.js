@@ -101,6 +101,7 @@ function showDetail(td, key) {
     const rect = td.getBoundingClientRect();
     popup.style.left = rect.left + "px";
     popup.style.top = rect.bottom + window.scrollY + "px";
+    popup.style.opacity = 0.85;
 }
 
 function hideDetail() {

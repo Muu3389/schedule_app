@@ -14,7 +14,6 @@
 <body>
     <div class="header">
         <h2>予定調整（回答）</h2>
-        <p>名前を入力し、都合が悪い時間・曖昧な時間を選択してください。<br>選択していないマスは可能な時間として扱われます。</p>
 
         <strong>名前：</strong>
         <input id="name" type="text" placeholder="名前を入力してください">
@@ -23,6 +22,7 @@
 
         <button id="badBtn" class="mode-btn" onclick="setMode('bad')">都合が悪い</button>
         <button id="unknownBtn" class="mode-btn" onclick="setMode('unknown')">わからない</button>
+        <button id="resetBtn" class="mode-btn" onclick="location.reload()">元に戻す</button>
 
         <br>
 

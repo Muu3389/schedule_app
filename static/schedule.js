@@ -175,10 +175,14 @@ function setMode(m) {
 
 // =====================
 function submit() {
-    const name = document.getElementById("name").value.trim();
+    let name = document.getElementById("name").value.trim();
     if (!name) {
-        alert("名前を入力してください！");
-        return;
+        // alert("名前を入力してください！");
+        while (!name || name === "") {
+            name = prompt("名前を入力してください！");
+            if (name === null) return;
+        }
+        // return;
     }
 
     const selections = Object.entries(state).map(([key, status]) => {

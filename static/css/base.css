@@ -1,21 +1,31 @@
 body {
     margin: 0;
+    cursor:default;
+    overflow: auto;
 }
 
 .header {
     position: fixed;
     top: 0;
     padding-left: 10px;
-    width: calc(100% - 10px);
-    background: white;
+    background: #ffffff;
     z-index: 90;
     height: var(--header-h);
 }
 
+@media screen and (max-width: 399px) {
+    .header {
+        width: 390px;
+        overflow: scroll;
+    }
+}
+
+@media screen and (min-width: 400px) {
+    .header { width: calc(100% - 10px);}
+}
+
 .footer {
     position: static;
-    /* margin-top: calc(--header-h + 230px); */
-    /* left: 400px; */
     background: white;
     padding: 12px;
     z-index: 50;
@@ -32,6 +42,7 @@ p {
 }
 
 button {
+    cursor: pointer;
     margin: 7px 5px;
     padding:12px 12px;
     border: 1px solid #000000;
@@ -65,6 +76,15 @@ table {
     margin-top: var(--header-h);
 }
 
+.table-wrapper {
+    overflow-x: hidden;
+    width: 100%;
+}
+
+#grid {
+    transition: transform 0.3s ease;
+}
+
 th,
 td {
     cursor: pointer;
@@ -81,14 +101,17 @@ td.disabled {
     cursor: not-allowed;
 }
 
-td.disabled:hover {
-    background-color: #767b84ff;
+tr:nth-child(even) td.disabled {
+    background-color: #706b74ff;
 }
 
-/* ===== 有効マス（未選択） ===== */
+/* 有効マス（未選択) */
 td.available {
     background-color: #e3f2fd;
-    /* 青 */
+}
+
+tr:nth-child(even) td.available {
+    background-color: #d3e2ed;
 }
 
 /* ===== 集計用 ===== */
