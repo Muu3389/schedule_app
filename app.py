@@ -46,6 +46,10 @@ class Respondent(db.Model):
 # Routes
 # =====================
 @app.route("/")
+def index_page():
+    return render_template("index.html")
+
+@app.route("/select")
 def create_page():
     return render_template("create.html", start_date=date.today().isoformat())
 

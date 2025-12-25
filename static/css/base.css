@@ -70,19 +70,9 @@ table {
     /* border-collapse: collapse; */
     border-collapse: separate;
     border-spacing: 0;
-    /* width: 370px; */
     width: calc(100% - 10px);
     margin: 0 5px;
     margin-top: var(--header-h);
-}
-
-.table-wrapper {
-    overflow-x: hidden;
-    width: 100%;
-}
-
-#grid {
-    transition: transform 0.3s ease;
 }
 
 th,
