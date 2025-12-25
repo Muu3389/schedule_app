@@ -68,7 +68,14 @@ td {
 /* テーブル共通 */
 .week-viewport {
     width: 100vw;
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.table-viewport {
+    height: calc(100vh - var(--header-h) / 2);
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .week-slider {

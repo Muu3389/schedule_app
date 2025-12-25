@@ -48,10 +48,18 @@ function rebuildSingle(grid) {
         let el = null;  // 現在の要素
         let moveKey = null;   // 現在のkey
         let elapsed = 0;    // 経過時間
+        let startX = 0;   // 開始X座標
+        let startY = 0;   // 開始Y座標
+        let lastX = 0;    // 最後のX座標
+        let lastY = 0;    // 最後のY座標
 
         // ===== スマホ（タッチ）=====
         td.addEventListener("touchstart", (e) => {
             if (e.touches.length !== 1) return;
+
+            const touch = e.touches[0];
+            startX = touch.clientX;
+            startY = touch.clientY;
 
             isTouch = true;
             touchStartTime = Date.now();
@@ -72,15 +80,17 @@ function rebuildSingle(grid) {
                 touch.clientX,
                 touch.clientY
             );
+            lastX = touch.clientX;
+            lastY = touch.clientY;
+
             if (!el || el.tagName !== "TD") return; // 無効マスを無視
-
-            if (el.classList.contains("disabled")) return;   // 無効マスは無視
-
 
             moveKey = el.dataset.key;
             if (!moveKey) return;   // 無効マスを無視
 
             if (moveKey !== startKey && !isScroll && elapsed < 250) isScroll = true; // スクロール判定
+
+            if (el.classList.contains("disabled")) return;   // 無効マスは無視
 
             // 0.24秒未満なら何もしない
             if (elapsed < 250) return;
@@ -107,8 +117,21 @@ function rebuildSingle(grid) {
         td.addEventListener("touchend", (e) => {
             const elapsed = Date.now() - touchStartTime;
 
-            // 短タップ（0.3秒未満 ＆ 移動なし）
-            if (elapsed < 300 && !isScroll) {
+            const dX = lastX - startX;
+            const dY = lastY - startY;
+            let slideVector = null;
+            if (Math.abs(dX) > 20 && Math.abs(dY) < Math.abs(dX)) {
+                if (dX > 0) {
+                    slideVector = "right";
+                } else {
+                    slideVector = "left";
+                }
+            }
+            if (isScroll && slideVector === "right" && hasPrevWeek()) { prevWeek(); }
+            if (isScroll && slideVector === "left" && hasNextWeek()) { nextWeek(); }
+
+            // 短タップ（0.25秒未満 ＆ 移動なし）
+            if (elapsed < 250 && !isScroll) {
                 dragAdd = !Object.hasOwn(state, startKey);
                 toggle(startTd, startKey);
             }
@@ -205,3 +228,37 @@ function submit() {
 }
 
 buildAllWeeks(rebuildSingle);
+const viewport = document.querySelector(".week-viewport");
+let startX = 0;
+let startY = 0;
+let lastX = 0;
+let lastY = 0;
+
+viewport.addEventListener("touchstart", (e) => {
+    if (e.touches.length !== 1) return;
+    const t = e.touches[0];
+    startX = t.clientX;
+    startY = t.clientY;
+});
+
+viewport.addEventListener("touchmove", (e) => {
+    if (e.touches.length !== 1) return;
+    const touch = e.touches[0];
+    lastX = touch.clientX;
+    lastY = touch.clientY;
+});
+
+viewport.addEventListener("touchend", () => {
+    const dX = lastX - startX;
+    const dY = lastY - startY;
+    let slideVector = null;
+    if (Math.abs(dX) > 10 && Math.abs(dY) < Math.abs(dX)) {
+        if (dX > 0) {
+            slideVector = "right";
+        } else {
+            slideVector = "left";
+        }
+    }
+    if (slideVector === "right" && hasPrevWeek()) { prevWeek(); }
+    if (slideVector === "left" && hasNextWeek()) { nextWeek(); }
+});

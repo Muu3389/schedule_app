@@ -120,3 +120,38 @@ fetch(`/${SCHEDULE_ID}/respondents`)
             ul.appendChild(li);
         });
     });
+
+const viewport = document.querySelector(".week-viewport");
+let startX = 0;
+let startY = 0;
+let lastX = 0;
+let lastY = 0;
+
+viewport.addEventListener("touchstart", (e) => {
+    if (e.touches.length !== 1) return;
+    const t = e.touches[0];
+    startX = t.clientX;
+    startY = t.clientY;
+});
+
+viewport.addEventListener("touchmove", (e) => {
+    if (e.touches.length !== 1) return;
+    const touch = e.touches[0];
+    lastX = touch.clientX;
+    lastY = touch.clientY;
+});
+
+viewport.addEventListener("touchend", () => {
+    const dX = lastX - startX;
+    const dY = lastY - startY;
+    let slideVector = null;
+    if (Math.abs(dX) > 20 && Math.abs(dY) < Math.abs(dX)) {
+        if (dX > 0) {
+            slideVector = "right";
+        } else {
+            slideVector = "left";
+        }
+    }
+    if (slideVector === "right" && hasPrevWeek()) { prevWeek(); }
+    if (slideVector === "left" && hasNextWeek()) { nextWeek(); }
+});

@@ -96,14 +96,17 @@ function rebuildSingle(grid) {
             }
             if (isScroll && slideVector === "right" && hasPrevWeek()) {prevWeek();}
             if (isScroll && slideVector === "left" && hasNextWeek()) {nextWeek();}
-            // 短タップ（0.3秒未満 ＆ 移動なし）
-            if (elapsed < 300 && !isScroll) {
+
+            // 短タップ（0.25秒未満 ＆ 移動なし）
+            if (elapsed < 250 && !isScroll) {
                 dragAdd = !state.has(startKey);
                 toggle(startTd, startKey);
             }
 
             isDrag = false;
-            e.preventDefault();
+            if (e.cancelable) {
+                e.preventDefault();
+            }
             e.stopPropagation();
         });
 
