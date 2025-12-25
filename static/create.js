@@ -18,10 +18,18 @@ function rebuildSingle(grid) {
         let el = null;  // 現在の要素
         let moveKey = null;   // 現在のkey
         let elapsed = 0;    // 経過時間
+        let startX = 0;   // 開始X座標
+        let startY = 0;   // 開始Y座標
+        let lastX = 0;    // 最後のX座標
+        let lastY = 0;    // 最後のY座標
 
         // ===== スマホ（タッチ）=====
         td.addEventListener("touchstart", (e) => {
             if (e.touches.length !== 1) return;
+
+            const touch = e.touches[0];
+            startX = touch.clientX;
+            startY = touch.clientY;
 
             touchStartTime = Date.now();
             startKey = key;
@@ -41,6 +49,9 @@ function rebuildSingle(grid) {
                 touch.clientX,
                 touch.clientY
             );
+            lastX = touch.clientX;
+            lastY = touch.clientY;
+
             if (!el || el.tagName !== "TD") return; // 無効マスを無視
 
             moveKey = el.dataset.key;
@@ -73,6 +84,18 @@ function rebuildSingle(grid) {
         td.addEventListener("touchend", (e) => {
             const elapsed = Date.now() - touchStartTime;
 
+            const dX = lastX - startX;
+            const dY = lastY - startY;
+            let slideVector = null;
+            if (Math.abs(dX) > 20 && Math.abs(dY) < Math.abs(dX)) {
+                if (dX > 0) {
+                    slideVector = "right";
+                } else {
+                    slideVector = "left";
+                }
+            }
+            if (isScroll && slideVector === "right" && hasPrevWeek()) {prevWeek();}
+            if (isScroll && slideVector === "left" && hasNextWeek()) {nextWeek();}
             // 短タップ（0.3秒未満 ＆ 移動なし）
             if (elapsed < 300 && !isScroll) {
                 dragAdd = !state.has(startKey);

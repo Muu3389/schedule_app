@@ -1,4 +1,4 @@
-let currentStartDate = toSunday(START_DATE);
+let currentStartDate;
 
 function toSunday(dateStr) {
     const d = new Date(dateStr);
@@ -36,6 +36,14 @@ function calcSlotRange(slots) {
     };
 }
 
+if (typeof AVAILABLE_SLOTS === "undefined") {
+    // create：今週
+    currentStartDate = toSunday(START_DATE);
+} else {
+    // summary / answer：一番古い日付の週
+    const firstDate = uniqueDates[0]; // YYYY-MM-DD
+    currentStartDate = toSunday(firstDate);
+}
 
 function hasAnySlotInWeek(slots, weekStartDate) {
     for (const key of slots) {
@@ -113,6 +121,7 @@ function buildAllWeeks(rebuildFn) {
     buildWeek(gridNow, 0, rebuildFn);
     buildWeek(gridNext, 1, rebuildFn);
     slider.style.transform = "translateX(-100vw)";
+    updateWeekButtons();
 }
 
 function slideNext(rebuildFn) {
