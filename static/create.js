@@ -1,11 +1,9 @@
-const grid = document.getElementById("grid");
-
 const state = new Set();    // 選択中のkey集合
 
 let isDrag = false;   // PC & スマホ共通
 let dragAdd = true;  // 追加 or 解除
 
-function rebuild() {
+function rebuildSingle(grid) {
     buildGrid(grid, null, (td, key) => {
         if (state.has(key)) td.classList.add("selected");
 
@@ -124,7 +122,7 @@ function toggle(td, key) {
 }
 
 // 初期描画
-rebuild();
+buildAllWeeks(rebuildSingle);
 
 // =====================
 // create submit

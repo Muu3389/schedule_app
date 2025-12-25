@@ -21,7 +21,13 @@
         <button class="nextweek-btn" id="nextBtn" onclick="nextWeek()">次の週 ▶</button>
     </div>
 
-    <table id="grid"></table>
+    <div class="week-viewport">
+    <div class="week-slider" id="weekSlider">
+        <table class="week-table" id="grid-prev"></table>
+        <table class="week-table" id="grid-now"></table>
+        <table class="week-table" id="grid-next"></table>
+    </div>
+    </div>
 
     <div class="footer">
         <div id="detailPopup" class="popup"></div>

@@ -27,7 +27,7 @@ if (EDIT_NAME) {
 // =====================
 // rebuild
 // =====================
-function rebuild() {
+function rebuildSingle(grid) {
     buildGrid(grid, AVAILABLE_SLOTS, (td, key) => {
 
         // 有効マスは青
@@ -204,4 +204,4 @@ function submit() {
         });
 }
 
-rebuild();
+buildAllWeeks(rebuildSingle);

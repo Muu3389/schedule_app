@@ -1,5 +1,3 @@
-const grid = document.getElementById("grid");
-
 // =====================
 // summary state
 // =====================
@@ -10,11 +8,9 @@ let summaryState = {}; // key -> { bad:[], unknown:[] }
 // =====================
 const { min, max } = calcSlotRange(AVAILABLE_SLOTS);
 
-function rebuild() {
+function rebuildSingle(grid) {
     buildGrid(grid, AVAILABLE_SLOTS, (td, key) => {
         const data = summaryState[key];
-
-        // 有効マスはまず青
         td.classList.add("available");
 
         if (!data) return;
@@ -50,7 +46,7 @@ fetch(`/${SCHEDULE_ID}/summary_data`)
     .then(r => r.json())
     .then(data => {
         summaryState = data;
-        rebuild();
+        buildAllWeeks(rebuildSingle);
     });
 
 // =====================

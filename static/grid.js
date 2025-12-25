@@ -94,25 +94,75 @@ function buildGrid(grid, slots, cellRenderer, minSlot = 0, maxSlot = 47) {
     }
 }
 
+const gridPrev = document.getElementById("grid-prev");
+const gridNow = document.getElementById("grid-now");
+const gridNext = document.getElementById("grid-next");
+const slider = document.getElementById("weekSlider");
+
+function buildWeek(grid, offset, rebuildFn) {
+    const base = currentStartDate;
+    currentStartDate = addDays(base, offset * 7);
+
+    rebuildFn(grid);
+
+    currentStartDate = base;
+}
+
+function buildAllWeeks(rebuildFn) {
+    buildWeek(gridPrev, -1, rebuildFn);
+    buildWeek(gridNow, 0, rebuildFn);
+    buildWeek(gridNext, 1, rebuildFn);
+    slider.style.transform = "translateX(-100vw)";
+}
+
+function slideNext(rebuildFn) {
+    if (!hasNextWeek()) return;
+
+    slider.style.transition = "transform 0.3s ease";
+    slider.style.transform = "translateX(-200vw)";
+
+    slider.addEventListener("transitionend", () => {
+        slider.style.transition = "none";
+        slider.style.transform = "translateX(-100vw)";
+
+        currentStartDate = addDays(currentStartDate, 7);
+        buildAllWeeks(rebuildFn);
+        updateWeekButtons();
+    }, { once: true });
+}
+
+function slidePrev(rebuildFn) {
+    if (!hasPrevWeek()) return;
+
+    slider.style.transition = "transform 0.3s ease";
+    slider.style.transform = "translateX(0)";
+
+    slider.addEventListener("transitionend", () => {
+        slider.style.transition = "none";
+        slider.style.transform = "translateX(-100vw)";
+
+        currentStartDate = addDays(currentStartDate, -7);
+        buildAllWeeks(rebuildFn);
+        updateWeekButtons();
+    }, { once: true });
+}
 
 function nextWeek() {
-    currentStartDate = addDays(currentStartDate, 7);
-    rebuild();
-    updateWeekButtons();
+    slideNext(rebuildSingle);
 }
 
 function prevWeek() {
-    currentStartDate = addDays(currentStartDate, -7);
-    rebuild();
-    updateWeekButtons();
+    slidePrev(rebuildSingle);
 }
 
 
 function hasPrevWeek() {
+    if (typeof AVAILABLE_SLOTS === "undefined") return true;
     return uniqueDates.some(d => d < currentStartDate);
 }
 
 function hasNextWeek() {
+    if (typeof AVAILABLE_SLOTS === "undefined") return true;
     const end = addDays(currentStartDate, 6);
     return uniqueDates.some(d => d > end);
 }
