@@ -1,5 +1,4 @@
 let currentStartDate;
-
 function toSunday(dateStr) {
     const d = new Date(dateStr);
     const day = d.getDay(); // 0:日, 1:月, ..., 6:土
@@ -36,9 +35,9 @@ function calcSlotRange(slots) {
     };
 }
 
-if (typeof AVAILABLE_SLOTS === "undefined") {
+if (typeof AVAILABLE_SLOTS === "undefined" && today  !== undefined) {
     // create：今週
-    currentStartDate = toSunday(START_DATE);
+    currentStartDate = toSunday(today);
 } else {
     // summary / answer：一番古い日付の週
     const firstDate = uniqueDates[0]; // YYYY-MM-DD
@@ -185,3 +184,15 @@ function updateWeekButtons() {
     prevBtn.style.visibility = hasPrevWeek() ? "visible" : "hidden";
     nextBtn.style.visibility = hasNextWeek() ? "visible" : "hidden";
 }
+
+const helpBtn = document.getElementById("helpBtn");
+const helpOverlay = document.getElementById("helpOverlay");
+const closeHelp = document.getElementById("closeHelp");
+
+helpBtn.addEventListener("click", () => {
+    helpOverlay.style.display = "flex"; // 中央に表示
+});
+
+closeHelp.addEventListener("click", () => {
+    helpOverlay.style.display = "none"; // 非表示に
+});

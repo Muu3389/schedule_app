@@ -120,7 +120,7 @@ function rebuildSingle(grid) {
             const dX = lastX - startX;
             const dY = lastY - startY;
             let slideVector = null;
-            if (Math.abs(dX) > 20 && Math.abs(dY) < Math.abs(dX)) {
+            if (Math.abs(dX) > 50 && Math.abs(dY) < Math.abs(dX)) {
                 if (dX > 0) {
                     slideVector = "right";
                 } else {

@@ -13,6 +13,21 @@ body {
     height: var(--header-h);
 }
 
+.headerTop {
+    display: flex;
+    align-items: center;
+}
+
+.headerTop button {
+    cursor: pointer;
+    margin-left: 10px;
+    border-radius: 20px;
+    padding: 5px 10px;
+    font-size: 15px;
+    color: #ffffff;
+    background-color: #2c3bc9;
+}
+
 @media screen and (max-width: 399px) {
     .header {
         width: 390px;
@@ -161,4 +176,48 @@ tr:first-child th:nth-child(2) {
 
 tr:first-child th:last-child {
     background-color: #a5afd6ee;
+}
+
+/* 画面全体のオーバーレイ */
+#helpOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    /* 半透明 */
+    display: none;
+    /* 最初は非表示 */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* ヘルプの中身 */
+#helpContent {
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 80%;
+    max-height: 80%;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+#helpContent ul li {
+    margin-top: 20px;
+}
+
+/* ×ボタン */
+#closeHelp {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    background: transparent;
+    border: 1px solid #000000;
+    font-size: 1.5rem;
+    cursor: pointer;
 }

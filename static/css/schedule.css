@@ -46,7 +46,3 @@ tr:nth-child(even) .unknown {
     background: #fff3cd;
     border-color: #ffcc00;
 }
-
-#resetBtn {
-    border-color: #000000;
-}

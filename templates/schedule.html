@@ -13,7 +13,7 @@
 
 <body>
     <div class="header">
-        <h2>予定調整（回答）</h2>
+        <div class="headerTop"><h2>回答</h2><button id="helpBtn">?</button></div>
 
         <strong>名前：</strong>
         <input id="name" type="text" placeholder="名前を入力してください">
@@ -22,7 +22,6 @@
 
         <button id="badBtn" class="mode-btn" onclick="setMode('bad')">都合が悪い</button>
         <button id="unknownBtn" class="mode-btn" onclick="setMode('unknown')">わからない</button>
-        <button id="resetBtn" class="mode-btn" onclick="location.reload()">元に戻す</button>
 
         <br>
 
@@ -41,9 +40,28 @@
         </div>
     </div>
 
+    <div id="helpOverlay">
+        <div id="helpContent">
+            <h2>回答画面の使い方</h2>
+            <ul>
+                <li>明るいのマスをクリックして、都合が悪い日時・まだ予定が曖昧な日時を選択してください。<br>（未選択の日時は都合がよいと扱われます。）</li>
+                <p>※例えば 7:00 とは 7:00 ~ 7:30 を想定しています</p>
+                <li>上部のボタンで、選択モードを切り替えられます。</li>
+                <li>「◀ 前の週」「次の週 ▶」ボタンで週を切り替えられます。</li>
+                <li>名前を入力してから「予定を送信」ボタンから回答を送信できます。</li>
+                <li>リロードすることで選択する前の状態に戻ります</li>
+            </ul>
+            <h3>＜スマートフォン限定＞</h3>
+            <ul>
+                <li>長押ししてドラッグすることで、複数のマスを一度に選択できます。</li>
+                <li>横スクロールでも週を切り替えられます。</li>
+            </ul>
+            <button id="closeHelp">閉じる</button>
+        </div>
+    </div>
+
     <!-- ===== Flask → JS 受け渡し ===== -->
     <script>
-        const START_DATE = "{{ schedule.start_date }}";
         const AVAILABLE_SLOTS = {{ slots | tojson }};
         const SCHEDULE_ID = "{{ schedule.id }}";
 

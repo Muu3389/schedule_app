@@ -22,7 +22,7 @@ db = SQLAlchemy(app)
 # =====================
 class Schedule(db.Model):
     id = db.Column(db.String(16), primary_key=True)
-    start_date = db.Column(db.String(10), nullable=False)
+    create_day = db.Column(db.String(10), nullable=False)
     slots_json = db.Column(db.Text, nullable=False)
 
 class Answer(db.Model):
@@ -51,7 +51,7 @@ def index_page():
 
 @app.route("/select")
 def create_page():
-    return render_template("create.html", start_date=date.today().isoformat())
+    return render_template("create.html", today=date.today().isoformat())
 
 @app.route("/create", methods=["POST"])
 def create_schedule():
@@ -60,7 +60,7 @@ def create_schedule():
 
     s = Schedule(
         id=schedule_id,
-        start_date=data["start_date"],
+        create_day=date.today().isoformat(),
         slots_json=json.dumps(data["slots"])
     )
     db.session.add(s)
@@ -91,7 +91,6 @@ def summary_page(sid):
     return render_template(
         "summary.html",
         schedule_id=sid,
-        start_date=s.start_date,
         slots_json=s.slots_json
     )
 

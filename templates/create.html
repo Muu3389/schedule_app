@@ -11,7 +11,7 @@
 
 <body>
     <div class="header">
-        <h2>スケジュール作成</h2>
+        <div class="headerTop"><h2>スケジュール作成</h2><button id="helpBtn">?</button></div>
         <p>予定を作成したい時間帯を選択してください。</p>
 
         <button class="preweek-btn" onclick="prevWeek()">◀ 前の週</button>
@@ -29,8 +29,27 @@
         </div>
     </div>
 
+    <div id="helpOverlay">
+        <div id="helpContent">
+            <h2>作成画面の使い方</h2>
+            <ul>
+                <li>表のマスをクリックして、予定候補とする日時を選択します。</li>
+                <p>※例えば 7:00 とは 7:00 ~ 7:30 を想定しています</p>
+                <li>「◀ 前の週」「次の週 ▶」ボタンで週を切り替えられます。</li>
+                <li>「この時間帯で作成」ボタンから、スケジュールを作成できます。</li>
+                <li>リロードすることで選択する前の状態に戻ります</li>
+            </ul>
+            <h3>＜スマートフォン限定＞</h3>
+            <ul>
+                <li>長押ししてドラッグすることで、複数のマスを一度に選択できます。</li>
+                <li>横スクロールでも週を切り替えられます。</li>
+            </ul>
+            <button id="closeHelp">閉じる</button>
+        </div>
+    </div>
+
     <script>
-        const START_DATE = "{{ start_date }}";
+        const today = "{{ today }}";
     </script>
     <script src="/static/grid.js"></script>
     <script src="/static/create.js"></script>

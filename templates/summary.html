@@ -12,7 +12,7 @@
 
 <body>
     <div class="header">
-        <h2>集計画面</h2>
+        <div class="headerTop"><h2>みんなの予定</h2><button id="helpBtn">?</button></div>
         <a href="/{{ schedule_id }}/answer">▶ 回答する</a>
 
         <br>
@@ -41,9 +41,22 @@
         <ul id="respondentList"></ul>
     </div>
 
+    <div id="helpOverlay">
+        <div id="helpContent">
+            <h2>集計画面の使い方</h2>
+            <ul>
+                <li>表のマスを長押しすると、その時間帯に回答した人が表示されます。</li>
+                <p>※例えば 7:00 とは 7:00 ~ 7:30 を想定しています</p>
+                <li>「◀ 前の週」「次の週 ▶」ボタン、または横スクロールで週を切り替えられます。</li>
+                <li>「▶ 回答する」ボタンから、自分の予定を回答できます。</li>
+                <li>回答者リストの名前から、回答内容を編集できます。</li>
+            </ul>
+            <button id="closeHelp">閉じる</button>
+        </div>
+    </div>
+
     <!-- ===== Flask → JS 受け渡し ===== -->
     <script>
-    const START_DATE = "{{ start_date }}";
     const SCHEDULE_ID = "{{ schedule_id }}";
     const AVAILABLE_SLOTS = JSON.parse({{ slots_json | tojson }});
     </script>

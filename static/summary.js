@@ -96,8 +96,9 @@ function showDetail(td, key) {
     // マスの下に表示
     const rect = td.getBoundingClientRect();
     popup.style.left = rect.left + "px";
-    popup.style.top = rect.bottom + window.scrollY + "px";
-    popup.style.opacity = 0.85;
+    popup.style.top = rect.top + window.scrollY - popup.offsetHeight + "px";
+    popup.style.borderRadius = "8px";
+    popup.style.opacity = 0.95;
 }
 
 function hideDetail() {
@@ -145,7 +146,7 @@ viewport.addEventListener("touchend", () => {
     const dX = lastX - startX;
     const dY = lastY - startY;
     let slideVector = null;
-    if (Math.abs(dX) > 20 && Math.abs(dY) < Math.abs(dX)) {
+    if (Math.abs(dX) > 50 && Math.abs(dY) < Math.abs(dX)) {
         if (dX > 0) {
             slideVector = "right";
         } else {
