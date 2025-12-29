@@ -260,16 +260,17 @@ function submit() {
  */
 async function copyUrl() {
     const url = window.location.href;
+    const btn = document.getElementById("copyUrlBtn");
+    // CSS変数からcolor-primaryの値を取得
+    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim();
+
     try {
         await navigator.clipboard.writeText(url);
-        // ボタンのテキストを一時的に変更してフィードバックを提供
-        const btn = document.getElementById("copyUrlBtn");
-        const originalText = btn.textContent;
-        btn.textContent = "コピーしました！";
-        btn.style.backgroundColor = "#4caf50";
+        // ボタンの色を緑色に変更
+        btn.style.backgroundColor = "#2bff00";
         setTimeout(() => {
-            btn.textContent = originalText;
-            btn.style.backgroundColor = "";
+            // color-primaryに戻す
+            btn.style.backgroundColor = primaryColor;
         }, 2000);
     } catch (err) {
         // フォールバック: 古いブラウザ対応
@@ -281,13 +282,11 @@ async function copyUrl() {
         textArea.select();
         try {
             document.execCommand("copy");
-            const btn = document.getElementById("copyUrlBtn");
-            const originalText = btn.textContent;
-            btn.textContent = "コピーしました！";
-            btn.style.backgroundColor = "#4caf50";
+            // ボタンの色を緑色に変更
+            btn.style.backgroundColor = "#2bff00";
             setTimeout(() => {
-                btn.textContent = originalText;
-                btn.style.backgroundColor = "";
+                // color-primaryに戻す
+                btn.style.backgroundColor = primaryColor;
             }, 2000);
         } catch (fallbackErr) {
             alert("URLのコピーに失敗しました。手動でコピーしてください: " + url);
