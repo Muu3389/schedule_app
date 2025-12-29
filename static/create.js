@@ -18,6 +18,40 @@ let dragAdd = true;
 /** セッションストレージから設定を取得 */
 const setupData = JSON.parse(sessionStorage.getItem("scheduleSetup") || "{}");
 
+/** コピーした週の選択状態を保存 */
+let copiedWeekState = null;
+
+/**
+ * 通知メッセージを表示（数秒後に自動で消える）
+ * @param {string} message - 表示するメッセージ
+ */
+function showNotification(message) {
+    const notification = document.getElementById("notification");
+    if (!notification) return;
+
+    notification.textContent = message;
+    notification.classList.add("show");
+
+    // 2秒後に自動で消える
+    setTimeout(() => {
+        notification.classList.remove("show");
+    }, 2000);
+}
+
+/**
+ * ペーストボタンの有効/無効を更新
+ */
+function updatePasteButton() {
+    const pasteBtn = document.querySelector(".paste-btn");
+    if (!pasteBtn) return;
+
+    if (copiedWeekState && copiedWeekState.state.size > 0) {
+        pasteBtn.classList.remove("disabled");
+    } else {
+        pasteBtn.classList.add("disabled");
+    }
+}
+
 // =====================
 // グリッド再構築
 // =====================
@@ -109,6 +143,93 @@ function toggle(td, key) {
 }
 
 // =====================
+// コピー/ペースト機能
+// =====================
+/**
+ * 現在の週の選択状態をコピー
+ */
+function copyCurrentWeek() {
+    // 現在の週の開始日と終了日を取得
+    const weekStart = currentStartDate;
+    const weekEnd = addDays(weekStart, 6);
+
+    // 現在の週に属する選択状態のみを抽出
+    const weekState = new Set();
+    for (const key of state) {
+        // キーから日付部分を取得（例: "2024-01-01-0" -> "2024-01-01"）
+        const dateStr = key.split("-").slice(0, 3).join("-");
+
+        // 日付文字列を直接比較
+        if (dateStr >= weekStart && dateStr <= weekEnd) {
+            // 週の開始日からの日数を計算（0-6の範囲）
+            let dayIndex = -1;
+            for (let i = 0; i < 7; i++) {
+                const checkDate = addDays(weekStart, i);
+                if (checkDate === dateStr) {
+                    dayIndex = i;
+                    break;
+                }
+            }
+
+            // 日付が見つかった場合のみ保存
+            if (dayIndex >= 0) {
+                // スロット番号を取得
+                const slot = key.split("-")[3];
+                weekState.add(`${dayIndex}-${slot}`);
+            }
+        }
+    }
+
+    copiedWeekState = {
+        weekStart: weekStart,
+        state: weekState
+    };
+
+    // ペーストボタンの表示を更新
+    updatePasteButton();
+
+    // 通知を表示
+    showNotification("コピーしました");
+}
+
+/**
+ * コピーした選択状態を現在の週にペースト
+ */
+function pasteCurrentWeek() {
+    if (!copiedWeekState || copiedWeekState.state.size === 0) {
+        return;
+    }
+
+    // 現在の週の範囲を取得
+    const weekStart = currentStartDate;
+
+    // 現在の週の選択状態をクリア（現在の週に属するもののみ）
+    const weekEnd = addDays(weekStart, 6);
+    const keysToRemove = [];
+    for (const key of state) {
+        // キーから日付部分を取得
+        const dateStr = key.split("-").slice(0, 3).join("-");
+
+        // 日付文字列を直接比較
+        if (dateStr >= weekStart && dateStr <= weekEnd) {
+            keysToRemove.push(key);
+        }
+    }
+    keysToRemove.forEach(key => state.delete(key));
+
+    // コピーした状態を現在の週に適用
+    for (const relativeKey of copiedWeekState.state) {
+        const [dayIndex, slot] = relativeKey.split("-");
+        const targetDate = addDays(weekStart, parseInt(dayIndex));
+        const key = `${targetDate}-${slot}`;
+        state.add(key);
+    }
+
+    // グリッドを再構築して選択状態を反映
+    rebuildSingle(gridNow);
+}
+
+// =====================
 // スケジュール作成
 // =====================
 /**
@@ -167,6 +288,8 @@ function initialize() {
     // 初期描画
     try {
         buildAllWeeks(rebuildSingle);
+        // 初期状態でペーストボタンを非表示にする
+        updatePasteButton();
     } catch (error) {
         console.error("グリッドの初期化エラー:", error);
         alert("エラーが発生しました。ページを再読み込みしてください。");

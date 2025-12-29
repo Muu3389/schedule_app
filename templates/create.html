@@ -17,6 +17,8 @@
         <div class="button-container">
             <button class="preweek-btn" onclick="prevWeek()">◀ 前の週</button>
             <button class="nextweek-btn" onclick="nextWeek()">次の週 ▶</button>
+            <button class="copy-btn" onclick="copyCurrentWeek()">コピー</button>
+            <button class="paste-btn" onclick="pasteCurrentWeek()">ペースト</button>
             <button class="submit-btn" onclick="create()">この時間帯で作成</button>
         </div>
     </div>
@@ -30,6 +32,8 @@
             </div>
         </div>
     </div>
+
+    <div id="notification" class="notification"></div>
 
     <div id="helpOverlay">
         <div id="helpContent">

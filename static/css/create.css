@@ -6,3 +6,32 @@
 tr:nth-child(even) .selected {
     background-color: var(--color-selected-alt);
 }
+
+/* ===== 通知メッセージ ===== */
+.notification {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
+}
+
+.notification.show {
+    opacity: 1;
+}
+
+/* ===== ペーストボタンの無効化スタイル ===== */
+.paste-btn.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}

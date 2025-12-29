@@ -115,20 +115,20 @@ body {
 }
 
 /* 前・次の週ボタンとその他のボタンの間隔を広げる */
-.header .nextweek-btn {
-    margin-right: var(--spacing-md);
+.header .button-container .nextweek-btn {
+    margin-right: var(--spacing-lg) !important;
 }
 
 /* レスポンシブ対応：画面幅が狭い場合も間隔を維持 */
 @media screen and (max-width: 600px) {
-    .header .nextweek-btn {
-        margin-right: var(--spacing-sm);
+    .header .button-container .nextweek-btn {
+        margin-right: var(--spacing-md) !important;
     }
 }
 
 @media screen and (max-width: 400px) {
-    .header .nextweek-btn {
-        margin-right: var(--spacing-xs);
+    .header .button-container .nextweek-btn {
+        margin-right: var(--spacing-sm) !important;
     }
 }
 
