@@ -24,6 +24,9 @@ class Schedule(db.Model):
     id = db.Column(db.String(16), primary_key=True)
     create_day = db.Column(db.String(10), nullable=False)
     slots_json = db.Column(db.Text, nullable=False)
+    title = db.Column(db.String(200), nullable=True)
+    time_interval = db.Column(db.Integer, nullable=False, default=30)
+    creator_password = db.Column(db.String(100), nullable=True)
 
 class Answer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -50,6 +53,10 @@ class Respondent(db.Model):
 def index_page():
     return render_template("index.html")
 
+@app.route("/setup")
+def setup_page():
+    return render_template("setup.html")
+
 @app.route("/select")
 def create_page():
     return render_template("create.html", today=date.today().isoformat())
@@ -62,7 +69,10 @@ def create_schedule():
     s = Schedule(
         id=schedule_id,
         create_day=date.today().isoformat(),
-        slots_json=json.dumps(data["slots"])
+        slots_json=json.dumps(data["slots"]),
+        title=data.get("title", ""),
+        time_interval=data.get("time_interval", 30),
+        creator_password=data.get("creator_password", "")
     )
     db.session.add(s)
     db.session.commit()
@@ -83,7 +93,8 @@ def answer_page(sid):
         schedule=schedule,
         slots=json.loads(schedule.slots_json),
         edit_name=name,
-        answers=[{"day": a.day, "slot": a.slot, "status": a.status} for a in answers]
+        answers=[{"day": a.day, "slot": a.slot, "status": a.status} for a in answers],
+        time_interval=schedule.time_interval or 30
     )
 
 @app.route("/<sid>/summary")
@@ -92,7 +103,9 @@ def summary_page(sid):
     return render_template(
         "summary.html",
         schedule_id=sid,
-        slots_json=s.slots_json
+        slots_json=s.slots_json,
+        title=s.title or "スケジュール",
+        time_interval=s.time_interval or 30
     )
 
 @app.route("/<sid>/submit", methods=["POST"])
@@ -132,6 +145,46 @@ def summary_data(sid):
 def respondents(sid):
     rows = Respondent.query.filter_by(schedule_id=sid).all()
     return jsonify([r.name for r in rows])
+
+@app.route("/<sid>/verify_password", methods=["POST"])
+def verify_password(sid):
+    data = request.json
+    schedule = Schedule.query.get_or_404(sid)
+    if schedule.creator_password == data.get("password", ""):
+        return jsonify({"valid": True})
+    return jsonify({"valid": False}), 401
+
+@app.route("/<sid>/edit")
+def edit_page(sid):
+    schedule = Schedule.query.get_or_404(sid)
+    password = request.args.get("password", "")
+
+    # パスワード確認
+    if schedule.creator_password != password:
+        return "パスワードが正しくありません", 401
+
+    return render_template(
+        "edit.html",
+        schedule_id=sid,
+        slots_json=schedule.slots_json,
+        time_interval=schedule.time_interval or 30,
+        password=password
+    )
+
+@app.route("/<sid>/update_slots", methods=["POST"])
+def update_slots(sid):
+    data = request.json
+    schedule = Schedule.query.get_or_404(sid)
+
+    # パスワード確認
+    if schedule.creator_password != data.get("password", ""):
+        return jsonify({"error": "パスワードが正しくありません"}), 401
+
+    # スロットを更新
+    schedule.slots_json = json.dumps(data["slots"])
+    db.session.commit()
+
+    return jsonify({"success": True})
 
 # =====================
 # 起動時に必ずテーブル作成

@@ -41,13 +41,15 @@ function addDays(base, d) {
 
 /**
  * スロット番号を時間ラベルに変換
- * @param {number} slot - スロット番号（0-47）
+ * @param {number} slot - スロット番号
+ * @param {number} timeInterval - 時間の区切り幅（分、デフォルト: 30）
  * @returns {string} 時間ラベル（例: "7:00", "7:30"）
  */
-function slotLabel(slot) {
-    const h = Math.floor(slot / 2);
-    const m = slot % 2 === 0 ? "00" : "30";
-    return `${h}:${m}`;
+function slotLabel(slot, timeInterval = 30) {
+    const totalMinutes = slot * timeInterval;
+    const h = Math.floor(totalMinutes / 60);
+    const m = totalMinutes % 60;
+    return `${h}:${String(m).padStart(2, "0")}`;
 }
 
 /**
@@ -113,8 +115,9 @@ function hasAnySlotInWeek(slots, weekStartDate) {
  * @param {Function|null} cellRenderer - セルをカスタマイズする関数 (td, key) => void
  * @param {number} minSlot - 最小スロット番号（デフォルト: 0）
  * @param {number} maxSlot - 最大スロット番号（デフォルト: 47）
+ * @param {number} timeInterval - 時間の区切り幅（分、デフォルト: 30）
  */
-function buildGrid(grid, slots, cellRenderer, minSlot = 0, maxSlot = 47) {
+function buildGrid(grid, slots, cellRenderer, minSlot = 0, maxSlot = 47, timeInterval = 30) {
     grid.innerHTML = "";
 
     // ヘッダー行を作成（日付列）
@@ -137,7 +140,7 @@ function buildGrid(grid, slots, cellRenderer, minSlot = 0, maxSlot = 47) {
 
         // 時間ラベルのセル
         const th = document.createElement("th");
-        th.textContent = slotLabel(slot);
+        th.textContent = slotLabel(slot, timeInterval);
         tr.appendChild(th);
 
         // 7日分のセルを作成

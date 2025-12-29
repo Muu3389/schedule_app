@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>集計</title>
+    <title>{% if title and title.strip() %}{{ title }} - 集計{% else %}集計{% endif %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/summary.css') }}">
 </head>
@@ -14,14 +14,17 @@
             <button id="helpBtn">?</button>
             <button id="showRespondentsBtn">回答者一覧</button>
         </div>
-        <a href="/{{ schedule_id }}/answer">▶ 回答する</a>
+        <h3 id="title">{{ title }}</h3>
         <div id="respondentPopup" class="popup" style="display: none;">
-            <h3>この時間帯に回答した人</h3>
+            <h3>回答者一覧</h3>
             <ul id="respondentPopupList"></ul>
         </div>
-        <br>
-        <button class="preweek-btn" id="prevBtn" onclick="prevWeek()">◀ 前の週</button>
-        <button class="nextweek-btn" id="nextBtn" onclick="nextWeek()">次の週 ▶</button>
+        <div class="button-container">
+            <button class="preweek-btn" id="prevBtn" onclick="prevWeek()">◀ 前の週</button>
+            <button class="nextweek-btn" id="nextBtn" onclick="nextWeek()">次の週 ▶</button>
+            <button class="submit-btn" onclick="submit()">回答する</button>
+            <button class="edit-slots-btn" id="editSlotsBtn" onclick="showEditDialog()" style="display: none;">選択可能マスを編集</button>
+        </div>
     </div>
 
     <div class="week-viewport">
@@ -41,7 +44,7 @@
             <h2>集計画面の使い方</h2>
             <ul>
                 <li>表のマスを長押しすると、その時間帯に回答した人が表示されます。
-                    <p>※例えば 7:00 とは 7:00 ~ 7:30 を想定しています</p>
+                    <p>※時間の区切り幅はスケジュール作成時に設定された値に応じて変わります</p>
                 </li>
                 <li>「◀ 前の週」「次の週 ▶」ボタン、または横スクロールで週を切り替えられます。</li>
                 <li>「▶ 回答する」ボタンから、自分の予定を回答できます。</li>
@@ -54,6 +57,7 @@
     <script>
         const SCHEDULE_ID = "{{ schedule_id }}";
         const AVAILABLE_SLOTS = JSON.parse({{ slots_json | tojson }});
+        const TIME_INTERVAL = {{ time_interval | default(30) }};
     </script>
     <script src="{{ url_for('static', filename='utils/swipe-handler.js') }}"></script>
     <script src="{{ url_for('static', filename='grid.js') }}"></script>

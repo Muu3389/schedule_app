@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>スケジュール設定</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/setup.css') }}">
+</head>
+<body>
+    <div class="setup-container">
+        <h2>スケジュール設定</h2>
+        <form id="setupForm">
+            <div class="form-group">
+                <label for="title">スケジュールのタイトル</label>
+                <input type="text" id="title" name="title" placeholder="例: ミーティング日程調整">
+                <div class="help-text">このタイトルは集計画面に表示されます（任意）</div>
+            </div>
+
+            <div class="form-group">
+                <label for="timeInterval">時間の区切り幅（分）</label>
+                <select id="timeInterval" name="timeInterval" required>
+                    <option value="15">15分</option>
+                    <option value="30" selected>30分</option>
+                    <option value="60">60分</option>
+                </select>
+                <div class="help-text">時間帯を選択する際の区切り幅を設定します</div>
+            </div>
+
+            <div class="form-group">
+                <label for="creatorPassword">作成者パスワード</label>
+                <input type="password" id="creatorPassword" name="creatorPassword" placeholder="後から編集する際に使用します">
+                <div class="help-text">後から選択可能マスを編集する際に必要です（任意）</div>
+            </div>
+
+            <button type="submit" class="submit-btn">次へ：時間帯を選択</button>
+        </form>
+    </div>
+
+    <script src="{{ url_for('static', filename='setup.js') }}"></script>
+</body>
+</html>

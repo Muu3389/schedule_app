@@ -47,7 +47,7 @@ function rebuildSingle(grid) {
         }
 
         attachLongPress(td, key);
-    }, min, max);
+    }, min, max, TIME_INTERVAL);
 
     updateWeekButtons();
 }
@@ -204,6 +204,53 @@ fetch(`/${SCHEDULE_ID}/respondents`)
             names
         );
     });
+
+// =====================
+// 選択可能マス編集機能
+// =====================
+/**
+ * 編集ダイアログを表示
+ */
+function showEditDialog() {
+    const password = prompt("作成者パスワードを入力してください:");
+    if (!password) return;
+
+    // パスワード確認
+    fetch(`/${SCHEDULE_ID}/verify_password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password })
+    })
+        .then(r => {
+            if (r.status === 401) {
+                alert("パスワードが正しくありません");
+                return;
+            }
+            return r.json();
+        })
+        .then(data => {
+            if (data && data.valid) {
+                // 編集画面に遷移
+                window.location.href = `/${SCHEDULE_ID}/edit?password=${encodeURIComponent(password)}`;
+            }
+        })
+        .catch(() => {
+            alert("エラーが発生しました");
+        });
+}
+
+// 編集ボタンを表示（常に表示する）
+document.getElementById("editSlotsBtn").style.display = "inline-block";
+
+// =====================
+// 回答画面への遷移
+// =====================
+/**
+ * 回答画面に遷移する
+ */
+function submit() {
+    window.location.href = `/${SCHEDULE_ID}/answer`;
+}
 
 // =====================
 // スワイプ処理の初期化

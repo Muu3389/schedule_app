@@ -97,7 +97,7 @@ function rebuildSingle(grid) {
         td.onmouseup = () => {
             window.isDrag = false;
         };
-    }, min, max);
+    }, min, max, TIME_INTERVAL);
 
     updateWeekButtons();
 }

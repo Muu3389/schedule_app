@@ -64,14 +64,19 @@ body {
     position: fixed;
     top: 0;
     padding-left: var(--spacing-sm);
+    padding-right: var(--spacing-sm);
     background: var(--color-white);
     z-index: 90;
     height: var(--header-h);
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .headerTop {
     display: flex;
     align-items: center;
+    flex-wrap: nowrap;
 }
 
 .headerTop button {
@@ -82,6 +87,49 @@ body {
     font-size: 15px;
     color: var(--color-white);
     background-color: var(--color-primary);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* ボタンコンテナ */
+.header .button-container {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: var(--spacing-sm);
+    width: 100%;
+    overflow: hidden;
+    margin: var(--spacing-xs) 0;
+}
+
+.header .button-container button {
+    white-space: nowrap;
+    flex-shrink: 1;
+    min-width: fit-content;
+    margin: 0;
+}
+
+.header .button-container button.edit-slots-btn {
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+/* 前・次の週ボタンとその他のボタンの間隔を広げる */
+.header .nextweek-btn {
+    margin-right: var(--spacing-md);
+}
+
+/* レスポンシブ対応：画面幅が狭い場合も間隔を維持 */
+@media screen and (max-width: 600px) {
+    .header .nextweek-btn {
+        margin-right: var(--spacing-sm);
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .header .nextweek-btn {
+        margin-right: var(--spacing-xs);
+    }
 }
 
 @media screen and (max-width: 399px) {
@@ -109,6 +157,11 @@ h2 {
     font-size: 25px;
 }
 
+h3 {
+    margin: var(--spacing-sm) 0;
+    font-size: 20px;
+}
+
 p {
     margin: var(--spacing-xs) 0;
     font-size: 14px;
@@ -122,11 +175,83 @@ button {
     border: 1px solid var(--color-black);
     border-radius: var(--radius-sm);
     font-size: 14px;
+    white-space: nowrap;
+    box-sizing: border-box;
 }
 
 .submit-btn {
-    margin-left: 50px;
+    margin-left: 0;
     background-color: var(--color-submit-bg);
+}
+
+/* 選択可能マスを編集ボタン */
+.header .button-container .edit-slots-btn {
+    margin-left: auto;
+    background-color: var(--color-white);
+    color: var(--color-black);
+    border: 1px solid var(--color-gray-border);
+    flex-shrink: 0;
+}
+
+/* ヘッダー内のボタンのレスポンシブ対応 */
+.header .button-container button {
+    margin: 0;
+    padding: calc(var(--spacing-md) * 0.8) calc(var(--spacing-md) * 0.6);
+    font-size: clamp(10px, 2vw, 14px);
+    flex-shrink: 1;
+    min-width: fit-content;
+    max-width: 100%;
+}
+
+/* 画面幅が狭い場合の調整 */
+@media screen and (max-width: 800px) {
+    .header .button-container {
+        gap: var(--spacing-xs);
+    }
+
+    .header .button-container button {
+        padding: calc(var(--spacing-md) * 0.7) calc(var(--spacing-md) * 0.5);
+        font-size: clamp(9px, 1.8vw, 13px);
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .header .button-container {
+        gap: var(--spacing-xs);
+    }
+
+    .header .button-container button {
+        padding: calc(var(--spacing-md) * 0.75) calc(var(--spacing-md) * 0.6);
+        font-size: clamp(10px, 2vw, 13px);
+    }
+
+    .header .preweek-btn,
+    .header .nextweek-btn {
+        padding: calc(var(--spacing-md) * 0.75) calc(var(--spacing-md) * 0.5);
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .header .button-container {
+        gap: calc(var(--spacing-xs) * 0.8);
+    }
+
+    .header .button-container button {
+        padding: calc(var(--spacing-md) * 0.65) calc(var(--spacing-md) * 0.45);
+        font-size: clamp(9px, 1.8vw, 12px);
+    }
+
+    .header h2 {
+        font-size: clamp(18px, 4vw, 22px);
+    }
+
+    .header p {
+        font-size: clamp(11px, 2.5vw, 13px);
+    }
+
+    .header h3 {
+        font-size: clamp(14px, 3vw, 18px);
+    }
 }
 
 /* ===== 選択禁止（ドラッグ対策） ===== */

@@ -16,12 +16,15 @@
         <strong>名前：</strong>
         <input id="name" type="text" placeholder="名前を入力してください">
         <br>
-        <button id="badBtn" class="mode-btn" onclick="setMode('bad')">都合が悪い</button>
-        <button id="unknownBtn" class="mode-btn" onclick="setMode('unknown')">わからない</button>
-        <br>
-        <button class="preweek-btn" id="prevBtn" onclick="prevWeek()">◀ 前の週</button>
-        <button class="nextweek-btn" id="nextBtn" onclick="nextWeek()">次の週 ▶</button>
-        <button class="submit-btn" onclick="submit()">予定を送信</button>
+        <div class="button-container">
+            <button id="badBtn" class="mode-btn" onclick="setMode('bad')">都合が悪い</button>
+            <button id="unknownBtn" class="mode-btn" onclick="setMode('unknown')">わからない</button>
+        </div>
+        <div class="button-container">
+            <button class="preweek-btn" id="prevBtn" onclick="prevWeek()">◀ 前の週</button>
+            <button class="nextweek-btn" id="nextBtn" onclick="nextWeek()">次の週 ▶</button>
+            <button class="submit-btn" onclick="submit()">予定を送信</button>
+        </div>
     </div>
 
     <div class="week-viewport">
@@ -39,7 +42,7 @@
             <h2>回答画面の使い方</h2>
             <ul>
                 <li>明るいのマスをクリックして、都合が悪い日時・まだ予定が曖昧な日時を選択してください。<br>（未選択の日時は都合がよいと扱われます。）
-                    <p>※例えば 7:00 とは 7:00 ~ 7:30 を想定しています</p>
+                    <p>※時間の区切り幅はスケジュール作成時に設定された値に応じて変わります</p>
                 </li>
                 <li>上部のボタンで、選択モードを切り替えられます。</li>
                 <li>「◀ 前の週」「次の週 ▶」ボタンで週を切り替えられます。</li>
@@ -60,6 +63,7 @@
         const SCHEDULE_ID = "{{ schedule.id }}";
         const EDIT_NAME = {{ edit_name | tojson }};
         const PREV_ANSWERS = {{ answers | tojson }};
+        const TIME_INTERVAL = {{ time_interval | default(30) }};
     </script>
     <script src="{{ url_for('static', filename='utils/touch-handler.js') }}"></script>
     <script src="{{ url_for('static', filename='utils/swipe-handler.js') }}"></script>

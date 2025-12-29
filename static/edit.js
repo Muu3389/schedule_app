@@ -1,22 +1,19 @@
 /**
- * スケジュール作成画面のメインロジック
- * 時間帯の選択とスケジュール作成を管理
+ * 選択可能マス編集画面のメインロジック
+ * available_slotsの編集を管理
  */
 
 // =====================
 // 状態管理
 // =====================
-/** 選択中の時間帯のキー集合 */
-const state = new Set();
+/** 選択中の時間帯のキー集合（既存のavailable_slotsから初期化） */
+const state = new Set(AVAILABLE_SLOTS);
 
 /** PCでのドラッグ中かどうか（グローバルフラグ） */
 window.isDrag = false;
 
 /** 追加モードか削除モードか（true: 追加, false: 削除） */
 let dragAdd = true;
-
-/** セッションストレージから設定を取得 */
-const setupData = JSON.parse(sessionStorage.getItem("scheduleSetup") || "{}");
 
 // =====================
 // グリッド再構築
@@ -26,12 +23,15 @@ const setupData = JSON.parse(sessionStorage.getItem("scheduleSetup") || "{}");
  * @param {HTMLElement} grid - グリッド要素
  */
 function rebuildSingle(grid) {
-    // 設定から時間の区切り幅を取得
-    const timeInterval = setupData.timeInterval || 30;
+    // スロット範囲の計算
+    let min = 0;
+    let max = Math.floor(1440 / TIME_INTERVAL) - 1;
 
-    // 1日のスロット数を計算（24時間 = 1440分）
-    const slotsPerDay = Math.floor(1440 / timeInterval);
-    const maxSlot = slotsPerDay - 1;
+    if (state.size > 0) {
+        const range = calcSlotRange(Array.from(state));
+        min = Math.min(min, range.min);
+        max = Math.max(max, range.max);
+    }
 
     buildGrid(grid, null, (td, key) => {
         // 既に選択されているセルにはselectedクラスを追加
@@ -76,7 +76,7 @@ function rebuildSingle(grid) {
         td.onmouseup = () => {
             window.isDrag = false;
         };
-    }, 0, maxSlot, timeInterval);
+    }, min, max, TIME_INTERVAL);
 
     updateWeekButtons();
 }
@@ -109,66 +109,46 @@ function toggle(td, key) {
 }
 
 // =====================
-// スケジュール作成
+// 変更保存
 // =====================
 /**
- * 選択した時間帯でスケジュールを作成
- * 少なくとも1マス選択されている必要がある
+ * 変更をサーバーに保存
  */
-function create() {
+function save() {
     if (state.size === 0) {
-        alert("少なくとも1マス選択してください！");
-        return;
+        if (!confirm("選択可能マスが0個になります。本当に保存しますか？")) {
+            return;
+        }
     }
 
-    // 設定の確認（timeIntervalは必須）
-    if (!setupData.timeInterval) {
-        alert("時間の区切り幅が設定されていません。最初からやり直してください。");
-        window.location.href = "/setup";
-        return;
-    }
-
-    fetch("/create", {
+    fetch(`/${SCHEDULE_ID}/update_slots`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             slots: Array.from(state),
-            title: setupData.title,
-            time_interval: setupData.timeInterval,
-            creator_password: setupData.creatorPassword
+            password: CREATOR_PASSWORD
         })
     })
-        .then(r => r.json())
+        .then(r => {
+            if (r.status === 401) {
+                alert("パスワードが正しくありません");
+                return;
+            }
+            return r.json();
+        })
         .then(d => {
-            // セッションストレージをクリア
-            sessionStorage.removeItem("scheduleSetup");
-            location.href = `/${d.schedule_id}/summary`;
+            if (d && d.success) {
+                alert("変更を保存しました");
+                location.href = `/${SCHEDULE_ID}/summary`;
+            }
+        })
+        .catch(() => {
+            alert("エラーが発生しました");
         });
 }
 
 // =====================
 // 初期化
 // =====================
-// DOMContentLoadedイベントで初期化を実行
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initialize);
-} else {
-    initialize();
-}
-
-function initialize() {
-    // セッションストレージに設定があるか確認（timeIntervalは必須）
-    if (!setupData.timeInterval) {
-        // 設定がない場合はsetup画面にリダイレクト
-        window.location.href = "/setup";
-        return;
-    }
-
-    // 初期描画
-    try {
-        buildAllWeeks(rebuildSingle);
-    } catch (error) {
-        console.error("グリッドの初期化エラー:", error);
-        alert("エラーが発生しました。ページを再読み込みしてください。");
-    }
-}
+// 初期描画
+buildAllWeeks(rebuildSingle);
