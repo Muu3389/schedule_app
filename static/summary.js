@@ -253,6 +253,82 @@ function submit() {
 }
 
 // =====================
+// URLコピー機能
+// =====================
+/**
+ * 現在のURLをクリップボードにコピーする
+ */
+async function copyUrl() {
+    const url = window.location.href;
+    try {
+        await navigator.clipboard.writeText(url);
+        // ボタンのテキストを一時的に変更してフィードバックを提供
+        const btn = document.getElementById("copyUrlBtn");
+        const originalText = btn.textContent;
+        btn.textContent = "コピーしました！";
+        btn.style.backgroundColor = "#4caf50";
+        setTimeout(() => {
+            btn.textContent = originalText;
+            btn.style.backgroundColor = "";
+        }, 2000);
+    } catch (err) {
+        // フォールバック: 古いブラウザ対応
+        const textArea = document.createElement("textarea");
+        textArea.value = url;
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+            document.execCommand("copy");
+            const btn = document.getElementById("copyUrlBtn");
+            const originalText = btn.textContent;
+            btn.textContent = "コピーしました！";
+            btn.style.backgroundColor = "#4caf50";
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.backgroundColor = "";
+            }, 2000);
+        } catch (fallbackErr) {
+            alert("URLのコピーに失敗しました。手動でコピーしてください: " + url);
+        }
+        document.body.removeChild(textArea);
+    }
+}
+
+// =====================
+// 共有機能
+// =====================
+/**
+ * Web Share APIを使用してURLを共有する
+ */
+async function shareUrl() {
+    const url = window.location.href;
+    const title = document.getElementById("title").textContent || "スケジュール";
+
+    // Web Share APIが利用可能な場合
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: title,
+                text: `${title}のスケジュール`,
+                url: url
+            });
+        } catch (err) {
+            // ユーザーが共有をキャンセルした場合など
+            if (err.name !== "AbortError") {
+                console.error("共有エラー:", err);
+                // フォールバック: URLをコピー
+                copyUrl();
+            }
+        }
+    } else {
+        // Web Share APIが利用できない場合はURLをコピー
+        copyUrl();
+    }
+}
+
+// =====================
 // スワイプ処理の初期化
 // =====================
 const viewport = document.querySelector(".week-viewport");

@@ -13,3 +13,37 @@ a {
     display: none;
     z-index: 1000;
 }
+
+/* URLコピー・共有ボタンコンテナ */
+.share-buttons-container {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+/* URLコピー・共有ボタン */
+.copy-url-btn,
+.share-btn {
+    cursor: pointer;
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 15px;
+    color: var(--color-white);
+    background-color: var(--color-primary);
+    white-space: nowrap;
+    border: none;
+    transition: background-color 0.2s;
+    flex-shrink: 0;
+}
+
+.copy-url-btn:hover,
+.share-btn:hover {
+    background-color: #1e2ba0;
+}
+
+.copy-url-btn:active,
+.share-btn:active {
+    background-color: #151d7a;
+}
