@@ -52,7 +52,8 @@
     <script>
         const today = "{{ today }}";
     </script>
-    <script src="/static/grid.js"></script>
-    <script src="/static/create.js"></script>
+    <script src="{{ url_for('static', filename='utils/touch-handler.js') }}"></script>
+    <script src="{{ url_for('static', filename='grid.js') }}"></script>
+    <script src="{{ url_for('static', filename='create.js') }}"></script>
 </body>
 </html>

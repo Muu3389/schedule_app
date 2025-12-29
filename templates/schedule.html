@@ -61,6 +61,8 @@
         const EDIT_NAME = {{ edit_name | tojson }};
         const PREV_ANSWERS = {{ answers | tojson }};
     </script>
+    <script src="{{ url_for('static', filename='utils/touch-handler.js') }}"></script>
+    <script src="{{ url_for('static', filename='utils/swipe-handler.js') }}"></script>
     <script src="{{ url_for('static', filename='grid.js') }}"></script>
     <script src="{{ url_for('static', filename='schedule.js') }}"></script>
 </body>

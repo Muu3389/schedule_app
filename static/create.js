@@ -1,143 +1,94 @@
-const state = new Set();    // 選択中のkey集合
+/**
+ * スケジュール作成画面のメインロジック
+ * 時間帯の選択とスケジュール作成を管理
+ */
 
-let isDrag = false;   // PC & スマホ共通
-let dragAdd = true;  // 追加 or 解除
+// =====================
+// 状態管理
+// =====================
+/** 選択中の時間帯のキー集合 */
+const state = new Set();
 
+/** PCでのドラッグ中かどうか（グローバルフラグ） */
+window.isDrag = false;
+
+/** 追加モードか削除モードか（true: 追加, false: 削除） */
+let dragAdd = true;
+
+// =====================
+// グリッド再構築
+// =====================
+/**
+ * グリッドを再構築し、各セルにイベントハンドラーを設定
+ * @param {HTMLElement} grid - グリッド要素
+ */
 function rebuildSingle(grid) {
     buildGrid(grid, null, (td, key) => {
-        if (state.has(key)) td.classList.add("selected");
+        // 既に選択されているセルにはselectedクラスを追加
+        if (state.has(key)) {
+            td.classList.add("selected");
+        }
 
-        // =====================
-        // タッチ用変数
-        // =====================
-        let touchStartTime = 0; // タッチ開始時間
-        let startKey = null;    // タッチ開始key
-        let startTd = null;  // タッチ開始td
-        let isScroll = false;  // 実質動いたか
-        let dragStarted = false;    // ドラッグ開始したか
-        let el = null;  // 現在の要素
-        let moveKey = null;   // 現在のkey
-        let elapsed = 0;    // 経過時間
-        let startX = 0;   // 開始X座標
-        let startY = 0;   // 開始Y座標
-        let lastX = 0;    // 最後のX座標
-        let lastY = 0;    // 最後のY座標
-
-        // ===== スマホ（タッチ）=====
-        td.addEventListener("touchstart", (e) => {
-            if (e.touches.length !== 1) return;
-
-            const touch = e.touches[0];
-            startX = touch.clientX;
-            startY = touch.clientY;
-
-            touchStartTime = Date.now();
-            startKey = key;
-            startTd = td;
-            isScroll = false;
-            dragStarted = false;
-
-            isDrag = false;
-        });
-
-        td.addEventListener("touchmove", (e) => {
-            if (e.touches.length !== 1) return;
-
-            elapsed = Date.now() - touchStartTime;
-            const touch = e.touches[0];
-            el = document.elementFromPoint(
-                touch.clientX,
-                touch.clientY
-            );
-            lastX = touch.clientX;
-            lastY = touch.clientY;
-
-            if (!el || el.tagName !== "TD") return; // 無効マスを無視
-
-            moveKey = el.dataset.key;
-            if (!moveKey) return;   // 無効マスを無視
-
-            if(moveKey !== startKey && !isScroll && elapsed < 250) isScroll = true; // スクロール判定
-
-            // 0.24秒未満なら何もしない
-            if (elapsed < 250) return;
-
-            // スクロールだったら何もしない
-            if (isScroll) return;
-
-            // スクロール防止
-            e.preventDefault();
-
-            // ドラッグ開始
-            if (!dragStarted) {
-                dragStarted = true;
-                isDrag = true;
-                dragAdd = !state.has(startKey);
-                toggle(startTd, startKey);
-            }
-
-            // マス切り替え
-            if (dragAdd && !state.has(moveKey)) toggle(el, moveKey);
-            if (!dragAdd && state.has(moveKey)) toggle(el, moveKey);
-        }, { passive: false });
-
-        td.addEventListener("touchend", (e) => {
-            const elapsed = Date.now() - touchStartTime;
-
-            const dX = lastX - startX;
-            const dY = lastY - startY;
-            let slideVector = null;
-            if (Math.abs(dX) > 50 && Math.abs(dY) < Math.abs(dX)) {
-                if (dX > 0) {
-                    slideVector = "right";
-                } else {
-                    slideVector = "left";
+        // タッチ/マウスイベントハンドラーをアタッチ
+        attachTouchHandler(td, key, {
+            onToggle: (td, key, isAdd) => {
+                dragAdd = isAdd;
+                toggle(td, key);
+            },
+            getState: (key) => state.has(key),
+            onSwipe: (direction) => {
+                if (direction === "right" && hasPrevWeek()) {
+                    prevWeek();
+                } else if (direction === "left" && hasNextWeek()) {
+                    nextWeek();
                 }
-            }
-            if (isScroll && slideVector === "right" && hasPrevWeek()) {prevWeek();}
-            if (isScroll && slideVector === "left" && hasNextWeek()) {nextWeek();}
-
-            // 短タップ（0.25秒未満 ＆ 移動なし）
-            if (elapsed < 250 && !isScroll) {
-                dragAdd = !state.has(startKey);
-                toggle(startTd, startKey);
-            }
-
-            isDrag = false;
-            if (e.cancelable) {
-                e.preventDefault();
-            }
-            e.stopPropagation();
+            },
+            hasPrevWeek: hasPrevWeek,
+            hasNextWeek: hasNextWeek
         });
 
-        // ===== PC（マウス）=====
+        // PCでのマウスドラッグ開始処理
         td.onmousedown = (e) => {
             e.preventDefault();
-            isDrag = true;
+            window.isDrag = true;
             dragAdd = !state.has(key);
             toggle(td, key);
         };
 
-        td.onmouseover = () => isDrag && toggle(td, key);
-        td.onmouseup = () => isDrag = false;
+        // PCでのマウスオーバー処理
+        td.onmouseover = () => {
+            if (window.isDrag) {
+                toggle(td, key);
+            }
+        };
 
+        // PCでのマウスアップ処理
+        td.onmouseup = () => {
+            window.isDrag = false;
+        };
     }, 0, 47);
 
     updateWeekButtons();
 }
 
-
-
 // =====================
-// global mouse up
+// グローバルマウスアップ処理
 // =====================
 document.addEventListener("mouseup", () => {
-    isDrag = false;
+    window.isDrag = false;
 });
 
-// 選択中マスの切り替え
+// =====================
+// セル状態の切り替え
+// =====================
+/**
+ * セルの選択状態を切り替える
+ * @param {HTMLElement} td - セル要素
+ * @param {string} key - セルのキー
+ */
 function toggle(td, key) {
-    if(!td) return;
+    if (!td) return;
+
     if (dragAdd) {
         state.add(key);
         td.classList.add("selected");
@@ -147,12 +98,13 @@ function toggle(td, key) {
     }
 }
 
-// 初期描画
-buildAllWeeks(rebuildSingle);
-
 // =====================
-// create submit
+// スケジュール作成
 // =====================
+/**
+ * 選択した時間帯でスケジュールを作成
+ * 少なくとも1マス選択されている必要がある
+ */
 function create() {
     if (state.size === 0) {
         alert("少なくとも1マス選択してください！");
@@ -171,3 +123,9 @@ function create() {
             location.href = `/${d.schedule_id}/summary`;
         });
 }
+
+// =====================
+// 初期化
+// =====================
+// 初期描画
+buildAllWeeks(rebuildSingle);

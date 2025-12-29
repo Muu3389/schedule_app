@@ -55,6 +55,7 @@
         const SCHEDULE_ID = "{{ schedule_id }}";
         const AVAILABLE_SLOTS = JSON.parse({{ slots_json | tojson }});
     </script>
+    <script src="{{ url_for('static', filename='utils/swipe-handler.js') }}"></script>
     <script src="{{ url_for('static', filename='grid.js') }}"></script>
     <script src="{{ url_for('static', filename='summary.js') }}"></script>
 </body>

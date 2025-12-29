@@ -1,18 +1,36 @@
+/**
+ * スケジュール回答画面のメインロジック
+ * 都合が悪い時間帯とわからない時間帯の選択を管理
+ */
+
+// =====================
+// DOM要素の取得
+// =====================
 const grid = document.getElementById("grid");
 const badBtn = document.getElementById("badBtn");
 const unknownBtn = document.getElementById("unknownBtn");
 
+// =====================
+// 状態管理
+// =====================
+/** 現在の選択モード（"bad" または "unknown"） */
 let mode = "bad";
-let isDrag = false;
+
+/** PCでのドラッグ中かどうか（グローバルフラグ） */
+window.isDrag = false;
+
+/** 追加モードか削除モードか（true: 追加, false: 削除） */
 let dragAdd = true;
 
-// =====================
-// 選択状態
-// =====================
-const state = {}; // key -> bad / unknown
+/** 選択状態（key -> "bad" | "unknown"） */
+const state = {};
+
+/** スロット範囲の計算 */
 const { min, max } = calcSlotRange(AVAILABLE_SLOTS);
 
+// =====================
 // 既存回答の復元
+// =====================
 if (EDIT_NAME) {
     const nameInput = document.getElementById("name");
     nameInput.value = EDIT_NAME;
@@ -25,143 +43,73 @@ if (EDIT_NAME) {
 }
 
 // =====================
-// rebuild
+// グリッド再構築
 // =====================
+/**
+ * グリッドを再構築し、各セルにイベントハンドラーを設定
+ * @param {HTMLElement} grid - グリッド要素
+ */
 function rebuildSingle(grid) {
     buildGrid(grid, AVAILABLE_SLOTS, (td, key) => {
-
-        // 有効マスは青
+        // 有効マスにはavailableクラスを追加
         td.classList.add("available");
 
+        // 既に選択されているセルには状態クラスを追加
         if (state[key]) {
             td.classList.remove("available");
             td.classList.add(state[key]);
         }
 
-        // タッチ用変数
-        let isTouch = false;
-        let touchStartTime = 0; // タッチ開始時間
-        let startKey = null;    // タッチ開始key
-        let startTd = null;  // タッチ開始td
-        let isScroll = false;  // 実質動いたか
-        let dragStarted = false;    // ドラッグ開始したか
-        let el = null;  // 現在の要素
-        let moveKey = null;   // 現在のkey
-        let elapsed = 0;    // 経過時間
-        let startX = 0;   // 開始X座標
-        let startY = 0;   // 開始Y座標
-        let lastX = 0;    // 最後のX座標
-        let lastY = 0;    // 最後のY座標
-
-        // ===== スマホ（タッチ）=====
-        td.addEventListener("touchstart", (e) => {
-            if (e.touches.length !== 1) return;
-
-            const touch = e.touches[0];
-            startX = touch.clientX;
-            startY = touch.clientY;
-
-            isTouch = true;
-            touchStartTime = Date.now();
-            startKey = key;
-            startTd = td;
-            isScroll = false;
-            dragStarted = false;
-
-            isDrag = false
-        });
-
-        td.addEventListener("touchmove", (e) => {
-            if (e.touches.length !== 1) return;
-
-            elapsed = Date.now() - touchStartTime;
-            const touch = e.touches[0];
-            el = document.elementFromPoint(
-                touch.clientX,
-                touch.clientY
-            );
-            lastX = touch.clientX;
-            lastY = touch.clientY;
-
-            if (!el || el.tagName !== "TD") return; // 無効マスを無視
-
-            moveKey = el.dataset.key;
-            if (!moveKey) return;   // 無効マスを無視
-
-            if (moveKey !== startKey && !isScroll && elapsed < 250) isScroll = true; // スクロール判定
-
-            if (el.classList.contains("disabled")) return;   // 無効マスは無視
-
-            // 0.24秒未満なら何もしない
-            if (elapsed < 250) return;
-
-            // スクロールだったら何もしない
-            if (isScroll) return;
-
-            // スクロール防止
-            e.preventDefault();
-
-            // ドラッグ開始
-            if (!dragStarted) {
-                dragStarted = true;
-                isDrag = true;
-                dragAdd = !Object.hasOwn(state, startKey);
-                toggle(startTd, startKey);
-            }
-
-            // マス切り替え
-            if (dragAdd && !Object.hasOwn(state, moveKey)) toggle(el, moveKey);
-            if (!dragAdd && Object.hasOwn(state, moveKey)) toggle(el, moveKey);
-        }, { passive: false });
-
-        td.addEventListener("touchend", (e) => {
-            const elapsed = Date.now() - touchStartTime;
-
-            const dX = lastX - startX;
-            const dY = lastY - startY;
-            let slideVector = null;
-            if (Math.abs(dX) > 50 && Math.abs(dY) < Math.abs(dX)) {
-                if (dX > 0) {
-                    slideVector = "right";
-                } else {
-                    slideVector = "left";
+        // タッチ/マウスイベントハンドラーをアタッチ
+        attachTouchHandler(td, key, {
+            onToggle: (td, key, isAdd) => {
+                dragAdd = isAdd;
+                toggle(td, key);
+            },
+            getState: (key) => Object.hasOwn(state, key),
+            onSwipe: (direction) => {
+                if (direction === "right" && hasPrevWeek()) {
+                    prevWeek();
+                } else if (direction === "left" && hasNextWeek()) {
+                    nextWeek();
                 }
-            }
-            if (isScroll && slideVector === "right" && hasPrevWeek()) { prevWeek(); }
-            if (isScroll && slideVector === "left" && hasNextWeek()) { nextWeek(); }
-
-            // 短タップ（0.25秒未満 ＆ 移動なし）
-            if (elapsed < 250 && !isScroll) {
-                dragAdd = !Object.hasOwn(state, startKey);
-                toggle(startTd, startKey);
-            }
-
-            isDrag = false;
-            e.preventDefault();
-            e.stopPropagation();
+            },
+            hasPrevWeek: hasPrevWeek,
+            hasNextWeek: hasNextWeek
         });
 
-        // ===== PC（マウス）=====
+        // PCでのマウスドラッグ開始処理
         td.onmousedown = (e) => {
             e.preventDefault();
-            isDrag = true;
+            window.isDrag = true;
             dragAdd = !state[key];
             toggle(td, key);
         };
 
-        td.onmouseover = () => isDrag && toggle(td, key);
-        td.onmouseup = () => isDrag = false;
+        // PCでのマウスオーバー処理
+        td.onmouseover = () => {
+            if (window.isDrag) {
+                toggle(td, key);
+            }
+        };
 
+        // PCでのマウスアップ処理
+        td.onmouseup = () => {
+            window.isDrag = false;
+        };
     }, min, max);
 
     updateWeekButtons();
 }
 
-setMode("bad");
-
 // =====================
-// toggle
+// セル状態の切り替え
 // =====================
+/**
+ * セルの選択状態を切り替える
+ * @param {HTMLElement} td - セル要素
+ * @param {string} key - セルのキー
+ */
 function toggle(td, key) {
     td.classList.remove("bad", "unknown", "available");
 
@@ -175,11 +123,19 @@ function toggle(td, key) {
 }
 
 // =====================
+// グローバルマウスアップ処理
+// =====================
 document.addEventListener("mouseup", () => {
-    isDrag = false;
+    window.isDrag = false;
 });
 
 // =====================
+// モード設定
+// =====================
+/**
+ * 選択モードを設定（"bad" または "unknown"）
+ * @param {string} m - モード名
+ */
 function setMode(m) {
     mode = m;
 
@@ -195,17 +151,24 @@ function setMode(m) {
     }
 }
 
+// 初期モードを設定
+setMode("bad");
+
 
 // =====================
+// 回答送信
+// =====================
+/**
+ * 回答をサーバーに送信
+ * 名前が入力されていない場合はプロンプトで入力させる
+ */
 function submit() {
     let name = document.getElementById("name").value.trim();
     if (!name) {
-        // alert("名前を入力してください！");
         while (!name || name === "") {
             name = prompt("名前を入力してください！");
             if (name === null) return;
         }
-        // return;
     }
 
     const selections = Object.entries(state).map(([key, status]) => {
@@ -227,38 +190,27 @@ function submit() {
         });
 }
 
+// =====================
+// 初期化
+// =====================
+// グリッドの初期描画
 buildAllWeeks(rebuildSingle);
+
+// ビューポートにスワイプハンドラーをアタッチ
 const viewport = document.querySelector(".week-viewport");
-let startX = 0;
-let startY = 0;
-let lastX = 0;
-let lastY = 0;
-
-viewport.addEventListener("touchstart", (e) => {
-    if (e.touches.length !== 1) return;
-    const t = e.touches[0];
-    startX = t.clientX;
-    startY = t.clientY;
-});
-
-viewport.addEventListener("touchmove", (e) => {
-    if (e.touches.length !== 1) return;
-    const touch = e.touches[0];
-    lastX = touch.clientX;
-    lastY = touch.clientY;
-});
-
-viewport.addEventListener("touchend", () => {
-    const dX = lastX - startX;
-    const dY = lastY - startY;
-    let slideVector = null;
-    if (Math.abs(dX) > 10 && Math.abs(dY) < Math.abs(dX)) {
-        if (dX > 0) {
-            slideVector = "right";
-        } else {
-            slideVector = "left";
-        }
-    }
-    if (slideVector === "right" && hasPrevWeek()) { prevWeek(); }
-    if (slideVector === "left" && hasNextWeek()) { nextWeek(); }
-});
+if (viewport) {
+    attachSwipeHandler(viewport, {
+        onSwipeLeft: () => {
+            if (hasNextWeek()) {
+                nextWeek();
+            }
+        },
+        onSwipeRight: () => {
+            if (hasPrevWeek()) {
+                prevWeek();
+            }
+        },
+        hasPrevWeek: hasPrevWeek,
+        hasNextWeek: hasNextWeek
+    }, 10); // 閾値を10pxに設定（schedule.jsの元の実装に合わせる）
+}
