@@ -1,14 +1,70 @@
+/* ===== CSS変数 ===== */
+:root {
+    --header-h: 145px;
+
+    /* 色 */
+    --color-primary: #2c3bc9;
+    --color-white: #ffffff;
+    --color-black: #000000;
+    --color-gray-light: #f5f5f5;
+    --color-gray-border: #cccccc;
+    --color-gray-dark: #767b84ff;
+    --color-gray-darker: #706b74ff;
+    --color-gray-header: #b5b5b5;
+
+    /* テーブル用の色 */
+    --color-available: #e3f2fd;
+    --color-available-alt: #d3e2ed;
+    --color-selected: #b6e3ff;
+    --color-selected-alt: #b0d3ff;
+    --color-bad: #f6b6b6;
+    --color-bad-alt: #e6a6a6;
+    --color-bad-summary: #ffebee;
+    --color-unknown: #f6e6b6;
+    --color-unknown-alt: #e6d6a6;
+    --color-unknown-summary: #fff8e1;
+
+    /* テーブルヘッダーの色 */
+    --color-header-Sunday: #ff8080ee;
+    --color-header-Saturday: #a5afd6ee;
+
+    /* ボタンの色 */
+    --color-submit-bg: #ffff005a;
+    --color-mode-bad-bg: #ffdddd;
+    --color-mode-bad-border: #ff6666;
+    --color-mode-unknown-bg: #fff3cd;
+    --color-mode-unknown-border: #ffcc00;
+
+    /* オーバーレイ */
+    --color-overlay-bg: rgba(0, 0, 0, 0.6);
+    --color-shadow: rgba(0, 0, 0, 0.3);
+    --color-shadow-light: rgba(0, 0, 0, 0.2);
+
+    /* 余白 */
+    --spacing-xs: 5px;
+    --spacing-sm: 10px;
+    --spacing-md: 12px;
+    --spacing-lg: 20px;
+
+    /* 角丸半径 */
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+}
+
+/* ===== ベーススタイル ===== */
 body {
     margin: 0;
-    cursor:default;
+    cursor: default;
     overflow: hidden;
 }
 
+/* ===== ヘッダー ===== */
 .header {
     position: fixed;
     top: 0;
-    padding-left: 10px;
-    background: #ffffff;
+    padding-left: var(--spacing-sm);
+    background: var(--color-white);
     z-index: 90;
     height: var(--header-h);
 }
@@ -20,12 +76,12 @@ body {
 
 .headerTop button {
     cursor: pointer;
-    margin-left: 10px;
-    border-radius: 20px;
-    padding: 5px 10px;
+    margin-left: var(--spacing-sm);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xs) var(--spacing-sm);
     font-size: 15px;
-    color: #ffffff;
-    background-color: #2c3bc9;
+    color: var(--color-white);
+    background-color: var(--color-primary);
 }
 
 @media screen and (max-width: 399px) {
@@ -39,38 +95,41 @@ body {
     .header { width: 100%;}
 }
 
+/* ===== フッター ===== */
 .footer {
     position: static;
-    background: white;
-    padding: 12px;
+    background: var(--color-white);
+    padding: var(--spacing-md);
     z-index: 50;
 }
 
+/* ===== 文字スタイル ===== */
 h2 {
-    margin: 10px 0;
+    margin: var(--spacing-sm) 0;
     font-size: 25px;
 }
 
 p {
-    margin: 5px 0;
+    margin: var(--spacing-xs) 0;
     font-size: 14px;
 }
 
+/* ===== ボタン ===== */
 button {
     cursor: pointer;
-    margin: 7px 5px;
-    padding:12px 12px;
-    border: 1px solid #000000;
-    border-radius: 6px;
+    margin: 7px var(--spacing-xs);
+    padding: var(--spacing-md) var(--spacing-md);
+    border: 1px solid var(--color-black);
+    border-radius: var(--radius-sm);
     font-size: 14px;
 }
 
 .submit-btn {
     margin-left: 50px;
-    background-color: #ffff005a;
+    background-color: var(--color-submit-bg);
 }
 
-/* 選択禁止（ドラッグ対策） */
+/* ===== 選択禁止（ドラッグ対策） ===== */
 button,
 table,
 th,
@@ -80,7 +139,7 @@ td {
     -ms-user-select: none;
 }
 
-/* テーブル共通 */
+/* ===== テーブル全体のレイアウト ===== */
 .week-viewport {
     width: 100vw;
     overflow-x: auto;
@@ -105,7 +164,6 @@ td {
 }
 
 table {
-    /* border-collapse: collapse; */
     border-collapse: separate;
     border-spacing: 0;
     width: calc(100vw);
@@ -115,109 +173,105 @@ table {
 th,
 td {
     cursor: pointer;
-    border: 1px solid #ccc;
+    border: 1px solid var(--color-gray-border);
     width: auto;
     height: 26px;
     text-align: center;
     font-size: 11px;
 }
 
-/* 選択不可マス（全画面共通） */
+/* ===== テーブルセルの状態 ===== */
+/* 無効セル（全画面共通） */
 td.disabled {
-    background-color: #767b84ff;
+    background-color: var(--color-gray-dark);
     cursor: not-allowed;
 }
 
 tr:nth-child(even) td.disabled {
-    background-color: #706b74ff;
+    background-color: var(--color-gray-darker);
 }
 
-/* 有効マス（未選択) */
+/* 有効セル（未選択） */
 td.available {
-    background-color: #e3f2fd;
+    background-color: var(--color-available);
 }
 
 tr:nth-child(even) td.available {
-    background-color: #d3e2ed;
+    background-color: var(--color-available-alt);
 }
 
-/* ===== 集計用 ===== */
+/* 集計用セル */
 td.has-bad {
-    background-color: #ffebee;
-    /* 赤 */
+    background-color: var(--color-bad-summary);
 }
 
 td.has-unknown {
-    background-color: #fff8e1;
-    /* 黄 */
+    background-color: var(--color-unknown-summary);
 }
 
+/* ===== テーブルヘッダーのスタイル ===== */
 tr:first-child th {
     position: sticky;
     top: var(--header-h);
-    background-color: #ffffffce;
+    background-color: rgba(255, 255, 255, 0.81);
     z-index: 80;
 }
 
 th:first-child,
 td:first-child {
-    background-color: #dddddd;
+    background-color: var(--color-gray-light);
     width: 40px;
 }
 
 tr:first-child th:first-child {
     top: var(--header-h);
-    background-color: #b5b5b5;
+    background-color: var(--color-gray-header);
 }
 
 tr:first-child th:nth-child(2) {
-    background-color: #ff8080ee;
+    background-color: var(--color-header-Sunday);
 }
 
 tr:first-child th:last-child {
-    background-color: #a5afd6ee;
+    background-color: var(--color-header-Saturday);
 }
 
-/* 画面全体のオーバーレイ */
+/* ===== ヘルプオーバーレイ ===== */
 #helpOverlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    /* 半透明 */
+    background-color: var(--color-overlay-bg);
     display: none;
-    /* 最初は非表示 */
     justify-content: center;
     align-items: center;
     z-index: 1000;
 }
 
-/* ヘルプの中身 */
 #helpContent {
-    background-color: white;
-    padding: 20px;
-    border-radius: 12px;
+    background-color: var(--color-white);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
     max-width: 80%;
     max-height: 80%;
     overflow-y: auto;
     position: relative;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px var(--color-shadow);
 }
 
 #helpContent ul li {
-    margin-top: 20px;
+    margin-top: var(--spacing-lg);
 }
 
-/* ×ボタン */
 #closeHelp {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    padding: 5px 10px;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
     background: transparent;
-    border: 1px solid #000000;
+    border: 1px solid var(--color-black);
     font-size: 1.5rem;
     cursor: pointer;
 }

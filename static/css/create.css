@@ -1,11 +1,8 @@
-:root {
-    --header-h: 145px;
-}
-
+/* ===== 作成画面用スタイル ===== */
 .selected {
-    background: #b6e3ff;
+    background: var(--color-selected);
 }
 
 tr:nth-child(even) .selected {
-    background-color: #b0d3ff;
+    background-color: var(--color-selected-alt);
 }
