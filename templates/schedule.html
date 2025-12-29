@@ -1,30 +1,24 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>予定調整（回答）</title>
-
-  <!-- 共通CSS -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/schedule.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>予定調整（回答）</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/schedule.css') }}">
 </head>
-
 <body>
     <div class="header">
-        <div class="headerTop"><h2>回答</h2><button id="helpBtn">?</button></div>
-
+        <div class="headerTop">
+            <h2>回答</h2>
+            <button id="helpBtn">?</button>
+        </div>
         <strong>名前：</strong>
         <input id="name" type="text" placeholder="名前を入力してください">
-
         <br>
-
         <button id="badBtn" class="mode-btn" onclick="setMode('bad')">都合が悪い</button>
         <button id="unknownBtn" class="mode-btn" onclick="setMode('unknown')">わからない</button>
-
         <br>
-
         <button class="preweek-btn" id="prevBtn" onclick="prevWeek()">◀ 前の週</button>
         <button class="nextweek-btn" id="nextBtn" onclick="nextWeek()">次の週 ▶</button>
         <button class="submit-btn" onclick="submit()">予定を送信</button>
@@ -44,8 +38,9 @@
         <div id="helpContent">
             <h2>回答画面の使い方</h2>
             <ul>
-                <li>明るいのマスをクリックして、都合が悪い日時・まだ予定が曖昧な日時を選択してください。<br>（未選択の日時は都合がよいと扱われます。）</li>
-                <p>※例えば 7:00 とは 7:00 ~ 7:30 を想定しています</p>
+                <li>明るいのマスをクリックして、都合が悪い日時・まだ予定が曖昧な日時を選択してください。<br>（未選択の日時は都合がよいと扱われます。）
+                    <p>※例えば 7:00 とは 7:00 ~ 7:30 を想定しています</p>
+                </li>
                 <li>上部のボタンで、選択モードを切り替えられます。</li>
                 <li>「◀ 前の週」「次の週 ▶」ボタンで週を切り替えられます。</li>
                 <li>名前を入力してから「予定を送信」ボタンから回答を送信できます。</li>
@@ -60,20 +55,13 @@
         </div>
     </div>
 
-    <!-- ===== Flask → JS 受け渡し ===== -->
     <script>
         const AVAILABLE_SLOTS = {{ slots | tojson }};
         const SCHEDULE_ID = "{{ schedule.id }}";
-
         const EDIT_NAME = {{ edit_name | tojson }};
         const PREV_ANSWERS = {{ answers | tojson }};
     </script>
-
-    <!-- ===== 共通グリッドロジック ===== -->
     <script src="{{ url_for('static', filename='grid.js') }}"></script>
-
-    <!-- ===== 回答画面専用JS ===== -->
     <script src="{{ url_for('static', filename='schedule.js') }}"></script>
-
 </body>
 </html>

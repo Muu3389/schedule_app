@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>スケジュール作成</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/create.css') }}">
 </head>
-
 <body>
     <div class="header">
-        <div class="headerTop"><h2>スケジュール作成</h2><button id="helpBtn">?</button></div>
+        <div class="headerTop">
+            <h2>スケジュール作成</h2>
+            <button id="helpBtn">?</button>
+        </div>
         <p>予定を作成したい時間帯を選択してください。</p>
-
         <button class="preweek-btn" onclick="prevWeek()">◀ 前の週</button>
         <button class="nextweek-btn" onclick="nextWeek()">次の週 ▶</button>
         <button class="submit-btn" onclick="create()">この時間帯で作成</button>
@@ -33,8 +33,9 @@
         <div id="helpContent">
             <h2>作成画面の使い方</h2>
             <ul>
-                <li>表のマスをクリックして、予定候補とする日時を選択します。</li>
-                <p>※例えば 7:00 とは 7:00 ~ 7:30 を想定しています</p>
+                <li>表のマスをクリックして、予定候補とする日時を選択します。
+                    <p>※例えば 7:00 とは 7:00 ~ 7:30 を想定しています</p>
+                </li>
                 <li>「◀ 前の週」「次の週 ▶」ボタンで週を切り替えられます。</li>
                 <li>「この時間帯で作成」ボタンから、スケジュールを作成できます。</li>
                 <li>リロードすることで選択する前の状態に戻ります</li>
@@ -53,6 +54,5 @@
     </script>
     <script src="/static/grid.js"></script>
     <script src="/static/create.js"></script>
-
 </body>
 </html>

@@ -1,15 +1,12 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>集計</title>
-
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/summary.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>集計</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/summary.css') }}">
 </head>
-
 <body>
     <div class="header">
         <div class="headerTop">
@@ -22,9 +19,7 @@
             <h3>この時間帯に回答した人</h3>
             <ul id="respondentPopupList"></ul>
         </div>
-
         <br>
-
         <button class="preweek-btn" id="prevBtn" onclick="prevWeek()">◀ 前の週</button>
         <button class="nextweek-btn" id="nextBtn" onclick="nextWeek()">次の週 ▶</button>
     </div>
@@ -45,8 +40,9 @@
         <div id="helpContent">
             <h2>集計画面の使い方</h2>
             <ul>
-                <li>表のマスを長押しすると、その時間帯に回答した人が表示されます。</li>
-                <p>※例えば 7:00 とは 7:00 ~ 7:30 を想定しています</p>
+                <li>表のマスを長押しすると、その時間帯に回答した人が表示されます。
+                    <p>※例えば 7:00 とは 7:00 ~ 7:30 を想定しています</p>
+                </li>
                 <li>「◀ 前の週」「次の週 ▶」ボタン、または横スクロールで週を切り替えられます。</li>
                 <li>「▶ 回答する」ボタンから、自分の予定を回答できます。</li>
                 <li>回答者リストの名前から、回答内容を編集できます。</li>
@@ -55,12 +51,10 @@
         </div>
     </div>
 
-    <!-- ===== Flask → JS 受け渡し ===== -->
     <script>
-    const SCHEDULE_ID = "{{ schedule_id }}";
-    const AVAILABLE_SLOTS = JSON.parse({{ slots_json | tojson }});
+        const SCHEDULE_ID = "{{ schedule_id }}";
+        const AVAILABLE_SLOTS = JSON.parse({{ slots_json | tojson }});
     </script>
-
     <script src="{{ url_for('static', filename='grid.js') }}"></script>
     <script src="{{ url_for('static', filename='summary.js') }}"></script>
 </body>
