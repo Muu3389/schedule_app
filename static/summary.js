@@ -151,10 +151,6 @@ fetch(`/${SCHEDULE_ID}/respondents`)
     .then(r => r.json())
     .then(names => {
         renderRespondents(
-            document.getElementById("respondentList"),
-            names
-        );
-        renderRespondents(
             document.getElementById("respondentPopupList"),
             names
         );
