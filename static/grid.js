@@ -106,6 +106,9 @@ const gridNow = document.getElementById("grid-now");
 const gridNext = document.getElementById("grid-next");
 const slider = document.getElementById("weekSlider");
 
+// スライド中に多重入力されるのを防ぐためのフラグ
+let isSliding = false;
+
 function buildWeek(grid, offset, rebuildFn) {
     const base = currentStartDate;
     currentStartDate = addDays(base, offset * 7);
@@ -124,9 +127,11 @@ function buildAllWeeks(rebuildFn) {
 }
 
 function slideNext(rebuildFn) {
-    if (!hasNextWeek()) return;
+    if (!hasNextWeek() || isSliding) return;
 
-    slider.style.transition = "transform 0.3s ease";
+    isSliding = true;
+
+    slider.style.transition = "transform 0.15s ease";
     slider.style.transform = "translateX(-200vw)";
 
     slider.addEventListener("transitionend", () => {
@@ -136,13 +141,16 @@ function slideNext(rebuildFn) {
         currentStartDate = addDays(currentStartDate, 7);
         buildAllWeeks(rebuildFn);
         updateWeekButtons();
+        isSliding = false;
     }, { once: true });
 }
 
 function slidePrev(rebuildFn) {
-    if (!hasPrevWeek()) return;
+    if (!hasPrevWeek() || isSliding) return;
 
-    slider.style.transition = "transform 0.3s ease";
+    isSliding = true;
+
+    slider.style.transition = "transform 0.15s ease";
     slider.style.transform = "translateX(0)";
 
     slider.addEventListener("transitionend", () => {
@@ -152,6 +160,7 @@ function slidePrev(rebuildFn) {
         currentStartDate = addDays(currentStartDate, -7);
         buildAllWeeks(rebuildFn);
         updateWeekButtons();
+        isSliding = false;
     }, { once: true });
 }
 

@@ -12,8 +12,16 @@
 
 <body>
     <div class="header">
-        <div class="headerTop"><h2>みんなの予定</h2><button id="helpBtn">?</button></div>
+        <div class="headerTop">
+            <h2>みんなの予定</h2>
+            <button id="helpBtn">?</button>
+            <button id="showRespondentsBtn">回答者一覧</button>
+        </div>
         <a href="/{{ schedule_id }}/answer">▶ 回答する</a>
+        <div id="respondentPopup" class="popup" style="display: none;">
+            <h3>この時間帯に回答した人</h3>
+            <ul id="respondentPopupList"></ul>
+        </div>
 
         <br>
 
@@ -32,14 +40,15 @@
     </div>
 
     <div class="footer">
-        <div id="detailPopup" class="popup"></div>
 
         <div style="display: flex; align-items: center; gap: 10px;">
-        <h3>回答者</h3>
-        <p>編集できます。本人が編集しましょう。</p>
+            <h3>回答者</h3>
+            <p>編集できます。本人が編集しましょう。</p>
         </div>
         <ul id="respondentList"></ul>
     </div>
+
+    <div id="detailPopup" class="popup"></div>
 
     <div id="helpOverlay">
         <div id="helpContent">

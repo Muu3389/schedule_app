@@ -53,7 +53,7 @@ fetch(`/${SCHEDULE_ID}/summary_data`)
 // long press popup
 // =====================
 let pressTimer = null;
-const popup = document.getElementById("detailPopup");
+const detailPopup = document.getElementById("detailPopup");
 
 function attachLongPress(td, key) {
     td.onmousedown = () => {
@@ -90,36 +90,74 @@ function showDetail(td, key) {
         html += data.unknown.map(n => `・${n}`).join("<br>");
     }
 
-    popup.innerHTML = html;
-    popup.style.display = "block";
+    detailPopup.innerHTML = html;
+    detailPopup.style.display = "block";
 
     // マスの下に表示
     const rect = td.getBoundingClientRect();
-    popup.style.left = rect.left + "px";
-    popup.style.top = rect.top + window.scrollY - popup.offsetHeight + "px";
-    popup.style.borderRadius = "8px";
-    popup.style.opacity = 0.95;
+    detailPopup.style.left = rect.left + "px";
+    detailPopup.style.top = rect.top + window.scrollY - detailPopup.offsetHeight + "px";
+    detailPopup.style.borderRadius = "8px";
+    detailPopup.style.opacity = 0.95;
 }
 
 function hideDetail() {
     clearTimeout(pressTimer);
-    popup.style.display = "none";
+    detailPopup.style.display = "none";
+}
+
+const showBtn = document.getElementById("showRespondentsBtn");
+const respondentPopup = document.getElementById("respondentPopup");
+
+showBtn.onclick = (e) => {
+    e.stopPropagation();
+
+    if (respondentPopup.style.display === "block") {
+        respondentPopup.style.display = "none";
+        return;
+    }
+
+    const rect = showBtn.getBoundingClientRect();
+    respondentPopup.style.display = "block";
+    respondentPopup.style.position = "absolute";
+    respondentPopup.style.left = rect.left + "px";
+    respondentPopup.style.top = rect.bottom + window.scrollY - 40 + "px";
+};
+
+// ポップアップ内クリックで閉じない
+respondentPopup.addEventListener("click", (e) => {
+    e.stopPropagation();
+});
+
+// ポップアップ外クリックで閉じる
+document.addEventListener("click", () => {
+    respondentPopup.style.display = "none";
+});
+
+
+function renderRespondents(ul, names) {
+    ul.innerHTML = "";
+    names.forEach(name => {
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        a.textContent = name;
+        a.href = `/${SCHEDULE_ID}/answer?name=${encodeURIComponent(name)}`;
+        li.appendChild(a);
+        ul.appendChild(li);
+    });
 }
 
 fetch(`/${SCHEDULE_ID}/respondents`)
     .then(r => r.json())
     .then(names => {
-        const ul = document.getElementById("respondentList");
-        ul.innerHTML = "";
-
-        names.forEach(name => {
-            const li = document.createElement("li");
-            const a = document.createElement("a");
-            a.textContent = name;
-            a.href = `/${SCHEDULE_ID}/answer?name=${encodeURIComponent(name)}`;
-            li.appendChild(a);
-            ul.appendChild(li);
-        });
+        renderRespondents(
+            document.getElementById("respondentList"),
+            names
+        );
+        renderRespondents(
+            document.getElementById("respondentPopupList"),
+            names
+        );
     });
 
 const viewport = document.querySelector(".week-viewport");
