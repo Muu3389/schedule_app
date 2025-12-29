@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date
 import secrets, json
 import os
@@ -26,7 +27,7 @@ class Schedule(db.Model):
     slots_json = db.Column(db.Text, nullable=False)
     title = db.Column(db.String(200), nullable=True)
     time_interval = db.Column(db.Integer, nullable=False, default=30)
-    creator_password = db.Column(db.String(100), nullable=True)
+    creator_password = db.Column(db.String(255), nullable=True)
 
 class Answer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -66,13 +67,17 @@ def create_schedule():
     data = request.json
     schedule_id = secrets.token_hex(8)
 
+    # パスワードをハッシュ化して保存
+    password = data.get("creator_password", "")
+    password_hash = generate_password_hash(password) if password else ""
+
     s = Schedule(
         id=schedule_id,
         create_day=date.today().isoformat(),
         slots_json=json.dumps(data["slots"]),
         title=data.get("title", ""),
         time_interval=data.get("time_interval", 30),
-        creator_password=data.get("creator_password", "")
+        creator_password=password_hash
     )
     db.session.add(s)
     db.session.commit()
@@ -150,7 +155,14 @@ def respondents(sid):
 def verify_password(sid):
     data = request.json
     schedule = Schedule.query.get_or_404(sid)
-    if schedule.creator_password == data.get("password", ""):
+    password = data.get("password", "")
+
+    # 空のパスワードの場合は空文字列と比較
+    if not schedule.creator_password and not password:
+        return jsonify({"valid": True})
+
+    # ハッシュ化されたパスワードを検証
+    if schedule.creator_password and check_password_hash(schedule.creator_password, password):
         return jsonify({"valid": True})
     return jsonify({"valid": False}), 401
 
@@ -159,8 +171,10 @@ def edit_page(sid):
     schedule = Schedule.query.get_or_404(sid)
     password = request.args.get("password", "")
 
-    # パスワード確認
-    if schedule.creator_password != password:
+    # パスワード確認（ハッシュ化されたパスワードを検証）
+    if not schedule.creator_password and password:
+        return "パスワードが正しくありません", 401
+    if schedule.creator_password and not check_password_hash(schedule.creator_password, password):
         return "パスワードが正しくありません", 401
 
     return render_template(
@@ -175,9 +189,12 @@ def edit_page(sid):
 def update_slots(sid):
     data = request.json
     schedule = Schedule.query.get_or_404(sid)
+    password = data.get("password", "")
 
-    # パスワード確認
-    if schedule.creator_password != data.get("password", ""):
+    # パスワード確認（ハッシュ化されたパスワードを検証）
+    if not schedule.creator_password and password:
+        return jsonify({"error": "パスワードが正しくありません"}), 401
+    if schedule.creator_password and not check_password_hash(schedule.creator_password, password):
         return jsonify({"error": "パスワードが正しくありません"}), 401
 
     # スロットを更新
