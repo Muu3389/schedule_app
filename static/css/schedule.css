@@ -47,3 +47,36 @@ tr:nth-child(even) .unknown {
     background: var(--color-mode-unknown-bg);
     border-color: var(--color-mode-unknown-border);
 }
+
+/* ===== レスポンシブ対応 ===== */
+
+@media screen and (max-width: 600px) {
+    input {
+        font-size: 16px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .mode-btn {
+        padding: 4px var(--spacing-sm);
+        font-size: 12px;
+        margin-right: 4px;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    input {
+        font-size: 16px;
+    }
+
+    .mode-btn {
+        padding: 3px var(--spacing-xs);
+        font-size: 11px;
+        margin-right: 2px;
+    }
+
+    /* ヘッダーの高さを調整 */
+    :root {
+        --header-h: 180px;
+    }
+}

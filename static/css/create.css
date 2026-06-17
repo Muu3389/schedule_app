@@ -35,3 +35,21 @@ tr:nth-child(even) .selected {
     cursor: not-allowed;
     pointer-events: none;
 }
+
+/* ===== レスポンシブ対応 ===== */
+
+@media screen and (max-width: 600px) {
+    .notification {
+        top: 60px;
+        font-size: clamp(12px, 2vw, 14px);
+        padding: var(--spacing-xs) var(--spacing-sm);
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .notification {
+        top: 50px;
+        max-width: 90vw;
+        white-space: normal;
+    }
+}

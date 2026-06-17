@@ -18,5 +18,5 @@ document.getElementById("setupForm").addEventListener("submit", (e) => {
     }));
 
     // 作成画面に遷移
-    window.location.href = "/select";
+    window.location.href = SELECT_URL;
 });

@@ -245,11 +245,11 @@ function create() {
     // 設定の確認（timeIntervalは必須）
     if (!setupData.timeInterval) {
         alert("時間の区切り幅が設定されていません。最初からやり直してください。");
-        window.location.href = "/setup";
+        window.location.href = SETUP_URL;
         return;
     }
 
-    fetch("/create", {
+    fetch(CREATE_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -259,11 +259,20 @@ function create() {
             creator_password: setupData.creatorPassword
         })
     })
-        .then(r => r.json())
+        .then(r => {
+            if (!r.ok) {
+                throw new Error(`HTTP error! status: ${r.status}`);
+            }
+            return r.json();
+        })
         .then(d => {
-            // セッションストレージをクリア
             sessionStorage.removeItem("scheduleSetup");
-            location.href = `/${d.schedule_id}/summary`;
+            const summaryUrl = SUMMARY_URL_PATTERN.replace("__SCHEDULE_ID__", d.schedule_id);
+            location.href = summaryUrl;
+        })
+        .catch(error => {
+            console.error("スケジュール作成エラー:", error);
+            alert("スケジュールの作成に失敗しました。もう一度お試しください。");
         });
 }
 
@@ -281,7 +290,7 @@ function initialize() {
     // セッションストレージに設定があるか確認（timeIntervalは必須）
     if (!setupData.timeInterval) {
         // 設定がない場合はsetup画面にリダイレクト
-        window.location.href = "/setup";
+        window.location.href = SETUP_URL;
         return;
     }
 

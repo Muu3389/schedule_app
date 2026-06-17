@@ -64,6 +64,7 @@
         const EDIT_NAME = {{ edit_name | tojson }};
         const PREV_ANSWERS = {{ answers | tojson }};
         const TIME_INTERVAL = {{ time_interval | default(30) }};
+        const SUMMARY_URL_PATTERN = "{{ url_for('summary_page', sid='__SCHEDULE_ID__') }}";
     </script>
     <script src="{{ url_for('static', filename='utils/touch-handler.js') }}"></script>
     <script src="{{ url_for('static', filename='utils/swipe-handler.js') }}"></script>

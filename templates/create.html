@@ -58,6 +58,10 @@
 
     <script>
         const today = "{{ today }}";
+        const SETUP_URL = "{{ url_for('setup_page') }}";
+        const SELECT_URL = "{{ url_for('create_page') }}";
+        const CREATE_URL = "{{ url_for('create_schedule') }}";
+        const SUMMARY_URL_PATTERN = "{{ url_for('summary_page', sid='__SCHEDULE_ID__') }}";
     </script>
     <script src="{{ url_for('static', filename='utils/touch-handler.js') }}"></script>
     <script src="{{ url_for('static', filename='grid.js') }}"></script>

@@ -40,10 +40,16 @@ a {
 
 .copy-url-btn:hover,
 .share-btn:hover {
-    background-color: #1e2ba0;
+    background-color: var(--color-button-hover);
 }
 
 .copy-url-btn:active,
 .share-btn:active {
-    background-color: #2bff00;
+    background-color: var(--color-button-active);
+}
+
+.copy-url-btn:focus,
+.share-btn:focus {
+    outline: 2px solid var(--color-button-hover);
+    outline-offset: 2px;
 }

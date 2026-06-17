@@ -3,15 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Co-Schedule</title>
+    <title>Co-Schedule - スケジュール調整アプリ</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/create.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 </head>
 <body>
-    <h1>Co-Schedule</h1>
-    <h4>みんなの都合の良い日時を調整するアプリです。</h4>
-    <a href="/setup">スケジュール作成へ☞</a>
-    <br><br>
-    <p>なめたようなスタート画面です…</p>
+    <div class="hero-section">
+        <div class="hero-content">
+            <h1>Co-Schedule</h1>
+            <p>みんなの都合の良い日時を調整するアプリです。</p>
+            <div class="hero-actions">
+                <a href="{{ url_for('setup_page') }}" class="cta-button">スケジュール作成を開始</a>
+                <a href="{{ url_for('line_login') }}" class="cta-button cta-button-line">LINEでスケジュール作成</a>
+            </div>
+            <p class="line-note">※LINEログインで回答通知やスケジュール管理ができます</p>
+            <a href="{{ line_add_friend_url }}" class="line-friend-link" target="_blank" rel="noopener noreferrer">
+                <img src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png" alt="友だち追加" height="36">
+            </a>
+        </div>
+    </div>
 </body>
 </html>

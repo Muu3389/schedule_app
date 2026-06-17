@@ -50,6 +50,19 @@
     --radius-sm: 6px;
     --radius-md: 12px;
     --radius-lg: 20px;
+
+    /* ボタン状態色（青系統） */
+    --color-button-hover: #0066cc;
+    --color-button-active: #003d99;
+    --color-button-light: #e7f1ff;
+
+    /* テキスト色 */
+    --color-text-primary: #333333;
+    --color-text-secondary: #666666;
+    --color-text-hint: #999999;
+
+    /* フォーム要素 */
+    --color-input-border-focus: #007bff;
 }
 
 /* ===== ベーススタイル ===== */

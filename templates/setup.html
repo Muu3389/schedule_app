@@ -33,10 +33,26 @@
                 <div class="help-text">後から選択可能マスを編集する際に必要です（任意）</div>
             </div>
 
+            {% if line_user_id %}
+                <div class="login-status">
+                    <p>LINEログイン中：{{ line_name }}</p>
+                    <a href="{{ url_for('logout') }}" class="logout-btn">ログアウト</a>
+                </div>
+            {% else %}
+                <div class="guest-status">
+                    <p>ゲストとして利用中</p>
+                    <a href="{{ url_for('line_login') }}">LINEでログイン</a>
+                </div>
+            {% endif %}
+
             <button type="submit" class="submit-btn">次へ：時間帯を選択</button>
         </form>
     </div>
 
+    <script>
+        const SETUP_URL = "{{ url_for('setup_page') }}";
+        const SELECT_URL = "{{ url_for('create_page') }}";
+    </script>
     <script src="{{ url_for('static', filename='setup.js') }}"></script>
 </body>
 </html>

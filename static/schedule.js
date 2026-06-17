@@ -159,15 +159,55 @@ setMode("bad");
 // 回答送信
 // =====================
 /**
+ * 名前の検証
+ * @param {string} name - 名前
+ * @returns {string|null} - 有効な名前、または null
+ */
+function validateName(name) {
+    if (!name || typeof name !== "string") {
+        return null;
+    }
+
+    const trimmed = name.trim();
+
+    if (trimmed.length === 0 || trimmed.length > 50) {
+        return null;
+    }
+
+    const dangerousPattern = /<[^>]*>|javascript:|on\w+\s*=/i;
+    if (dangerousPattern.test(trimmed)) {
+        return null;
+    }
+
+    return trimmed;
+}
+
+/**
  * 回答をサーバーに送信
  * 名前が入力されていない場合はプロンプトで入力させる
  */
 function submit() {
     let name = document.getElementById("name").value.trim();
+
+    const validatedName = validateName(name);
+    if (!validatedName) {
+        alert("名前は1文字以上50文字以内で、HTMLタグやスクリプトを含めないでください。");
+        document.getElementById("name").focus();
+        return;
+    }
+
     if (!name) {
         while (!name || name === "") {
             name = prompt("名前を入力してください！");
             if (name === null) return;
+
+            const validated = validateName(name);
+            if (!validated) {
+                alert("名前は1文字以上50文字以内で、HTMLタグやスクリプトを含めないでください。");
+                name = "";
+                continue;
+            }
+            name = validated;
         }
     }
 
@@ -183,10 +223,19 @@ function submit() {
     fetch(`/${SCHEDULE_ID}/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, selections })
+        body: JSON.stringify({ name: validatedName || name, selections })
     })
-        .then(() => {
-            location.href = `/${SCHEDULE_ID}/summary`;
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => {
+                    throw new Error(err.error || "送信に失敗しました");
+                });
+            }
+            const summaryUrl = SUMMARY_URL_PATTERN.replace("__SCHEDULE_ID__", SCHEDULE_ID);
+            location.href = summaryUrl;
+        })
+        .catch(error => {
+            alert(error.message || "送信に失敗しました。もう一度お試しください。");
         });
 }
 
